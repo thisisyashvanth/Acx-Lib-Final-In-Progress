@@ -15,7 +15,7 @@ def login(user: UserLoginReq, db: Session = Depends(get_db)):
 
 
 # For Swagger
-@router.post("/login-form")
+@router.post("/swagger-login")
 def login_form(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     return auth_service.login_form(form_data, db)
     
