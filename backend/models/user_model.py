@@ -1,6 +1,6 @@
 import enum
 from core.database import Base
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, func, Enum
 
 class RoleEnum(str, enum.Enum):
     HR = "HR"
@@ -15,7 +15,7 @@ class User(Base):
     name = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
-    role = Column(enum.Enum(RoleEnum), nullable=False)
+    role = Column(Enum(RoleEnum), nullable=False)
     is_restricted = Column(Boolean, default=False)
     restricted_until = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
