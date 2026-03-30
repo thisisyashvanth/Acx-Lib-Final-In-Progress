@@ -1,0 +1,35 @@
+<h2>My Borrowed Books</h2>
+
+<div *ngIf="loading">Loading...</div>
+
+<div *ngIf="!loading && books.length === 0">
+  No records found.
+</div>
+
+<div *ngFor="let book of books" class="book-card">
+
+  <h3>{{ book.book_title }}</h3>
+
+  <p><strong>Status:</strong> 
+    <span [ngClass]="{
+      'active': book.status === 'ACTIVE',
+      'returned': book.status === 'RETURNED',
+      'overdue': book.status === 'OVERDUE'
+    }">
+      {{ book.status }}
+    </span>
+  </p>
+
+  <p><strong>Issued:</strong> {{ book.issue_date | date:'short' }}</p>
+  <p><strong>Due:</strong> {{ book.due_date | date:'short' }}</p>
+  <p><strong>Returned:</strong> {{ book.returned_date || 'Not yet' }}</p>
+  <p><strong>Renewals:</strong> {{ book.renewal_count }}</p>
+
+  <!-- ACTIONS -->
+  <div *ngIf="book.status === 'ACTIVE'">
+    <button (click)="renewBook(book.borrow_id)">Renew</button>
+    <button (click)="returnBook(book.borrow_id)">Return</button>
+  </div>
+
+  <hr>
+</div>

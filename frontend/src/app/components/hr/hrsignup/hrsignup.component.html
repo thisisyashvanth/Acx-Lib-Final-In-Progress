@@ -1,0 +1,46 @@
+<h2>Create HR Account</h2>
+<p>Join Acxhange Library to access resources</p>
+
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+    <div>
+        <label>Employee ID</label>
+        <input type="text" formControlName="employeeId" placeholder="Enter your EmployeeId" />
+        <small *ngIf="signupForm.get('employeeId')?.touched && signupForm.get('employeeId')?.invalid">
+            EmployeeId is required
+        </small>
+    </div>
+
+    <div>
+        <label>Full Name</label>
+        <input type="text" formControlName="name" placeholder="Enter your name" />
+        <small *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid">
+            Name is required
+        </small>
+    </div>
+
+    <div>
+        <label>Email Address</label>
+        <input type="email" formControlName="email" placeholder="Enter your email" />
+        <small *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
+            Valid email is required
+        </small>
+    </div>
+
+    <div>
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="Create a password" />
+        <small *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+            Minimum 6 characters required
+        </small>
+    </div>
+
+    <div *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="signupForm.invalid || loading">
+        {{ loading ? 'Creating Account...' : 'Sign Up' }}
+    </button>
+
+</form>

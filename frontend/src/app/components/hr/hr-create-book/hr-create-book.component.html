@@ -1,0 +1,49 @@
+<div>
+  <h2>Add New Book</h2>
+
+  <form (ngSubmit)="onSubmit()" #bookForm="ngForm">
+
+    <div>
+      <label>Title</label>
+      <input type="text" class="form-control" [(ngModel)]="book.title" name="title" required />
+    </div>
+
+    <div>
+      <label>Author</label>
+      <input type="text" class="form-control" [(ngModel)]="book.author" name="author" required />
+    </div>
+
+    <div>
+      <label>ISBN</label>
+      <input type="text" class="form-control" [(ngModel)]="book.isbn" name="isbn" required />
+    </div>
+
+    <div>
+      <label>Category</label>
+      <input type="text" class="form-control" [(ngModel)]="book.category" name="category" />
+    </div>
+
+    <div>
+      <label>Total Copies</label>
+      <input type="number" class="form-control" [(ngModel)]="book.total_copies" name="total_copies" required />
+    </div>
+
+    <div>
+      <label>Available Copies</label>
+      <input type="number" class="form-control" [(ngModel)]="book.available_copies" name="available_copies" required />
+    </div>
+
+    <button type="submit" [disabled]="bookForm.invalid">
+      Create Book
+    </button>
+
+  </form>
+
+  <div *ngIf="message" >
+    {{ message }}
+  </div>
+
+  <div *ngIf="error">
+    {{ error }}
+  </div>
+</div>

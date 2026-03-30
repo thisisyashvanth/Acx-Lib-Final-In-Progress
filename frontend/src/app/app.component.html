@@ -1,0 +1,4 @@
+<app-hr-navbar *ngIf="isLoggedIn() && auth.isHR()"></app-hr-navbar>
+<app-employee-navbar *ngIf="isLoggedIn() && auth.isEmployee()"></app-employee-navbar>
+
+<router-outlet></router-outlet>

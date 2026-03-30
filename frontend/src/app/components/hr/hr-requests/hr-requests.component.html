@@ -1,0 +1,23 @@
+<h2>HR - Book Requests</h2>
+
+<div *ngIf="loading">Loading requests...</div>
+
+<div *ngIf="requests.length === 0 && !loading">
+    No requests found.
+</div>
+
+<div *ngFor="let req of requests" class="request-card">
+
+    <p><strong>Employee:</strong> {{ req.employee_name }} ({{ req.employee_id }})</p>
+    <p><strong>Book ID:</strong> {{ req.book_id }}</p>
+    <p><strong>Type:</strong> {{ req.request_type }}</p>
+    <p><strong>Status:</strong> {{ req.status }}</p>
+    <p><strong>Requested At:</strong> {{ req.requested_at | date:'short' }}</p>
+
+    <div *ngIf="req.status === 'PENDING'">
+        <button (click)="review(req.request_id, true)">Approve</button>
+        <button (click)="review(req.request_id, false)">Reject</button>
+    </div>
+
+    <hr>
+</div>

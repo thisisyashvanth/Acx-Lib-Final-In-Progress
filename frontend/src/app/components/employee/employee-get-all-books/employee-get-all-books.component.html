@@ -1,0 +1,39 @@
+<h2>Available Books</h2>
+<p>Browse all books available in the library</p>
+
+<div *ngIf="loading">
+    <p>Loading books...</p>
+</div>
+
+<div *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+</div>
+
+<div *ngIf="!loading && books.length > 0">
+
+   <div *ngFor="let book of books">
+    <h3>{{ book.title }}</h3>
+    <p><strong>Author:</strong> {{ book.author }}</p>
+    <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+    <p><strong>Category:</strong> {{ book.category }}</p>
+    <p><strong>Total Copies:</strong> {{ book.total_copies }}</p>
+    <p><strong>Available Copies:</strong> {{ book.available_copies }}</p>
+
+    <button (click)="borrowBook(book.id)">Borrow</button>
+
+    <button (click)="renewBook(book.borrow_id)" [disabled]="!book.borrow_id">
+        Renew
+    </button>
+
+    <button (click)="returnBook(book.borrow_id)" [disabled]="!book.borrow_id">
+        Return
+    </button>
+
+    <hr>
+</div>
+
+</div>
+
+<div *ngIf="!loading && books.length === 0">
+    <p>No books available.</p>
+</div>
