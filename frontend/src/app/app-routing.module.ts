@@ -12,6 +12,8 @@ import { EmployeeGetAllBooksComponent } from './components/employee/employee-get
 import { HrCreateBookComponent } from './components/hr/hr-create-book/hr-create-book.component';
 import { HrRequestsComponent } from './components/hr/hr-requests/hr-requests.component';
 import { EmployeeBooksComponent } from './components/employee/employee-books/employee-books.component';
+import { HrGetAllBooksComponent } from './components/hr/hr-get-all-books/hr-get-all-books.component';
+import { HrGetBookHistoryComponent } from './components/hr/hr-get-book-history/hr-get-book-history.component';
 
 const routes: Routes = [
   { path: '', component: LandingpageComponent },
@@ -27,6 +29,8 @@ const routes: Routes = [
   { path: 'hr-dashboard', component: HrDashboardComponent, canActivate: [roleGuard] },
   { path: 'add-book', component: HrCreateBookComponent, canActivate: [roleGuard] },
   { path: 'view-requests', component: HrRequestsComponent, canActivate: [roleGuard] },
+  { path: 'books/:id/history', component: HrGetBookHistoryComponent, canActivate: [roleGuard] },
+  { path: 'hr-get-all-books', component: HrGetAllBooksComponent, canActivate: [roleGuard] }
 ];
 
 @NgModule({

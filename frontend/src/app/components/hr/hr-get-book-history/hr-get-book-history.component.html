@@ -1,0 +1,56 @@
+<h2>Book History</h2>
+
+<div *ngIf="loading">
+  <p>Loading history...</p>
+</div>
+
+<div *ngIf="error">
+  <p>{{ error }}</p>
+</div>
+
+
+<input type="text" placeholder="Search history..." [(ngModel)]="searchText" (input)="filterHistory()" />
+
+<div *ngIf="!loading && history.length > 0">
+
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Employee ID</th>
+        <th>Issue Date</th>
+        <th>Due Date</th>
+        <th>Returned Date</th>
+        <th>Status</th>
+        <th>Renewals</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let record of filteredHistory">
+        <td>{{ record.employee_name }}</td>
+        <td>{{ record.employee_id }}</td>
+        <td>{{ record.issue_date | date:'short' }}</td>
+        <td>{{ record.due_date | date:'short' }}</td>
+        <td>{{ record.returned_date ? (record.returned_date | date:'short') : '-' }}</td>
+        <td>
+          <span [ngClass]="{
+            'active': record.status === 'ACTIVE',
+            'returned': record.status === 'RETURNED',
+            'overdue': record.status === 'OVERDUE'
+          }">
+            {{ record.status }}
+          </span>
+        </td>
+        <td>{{ record.renewal_count }}</td>
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>
+
+<div *ngIf="!loading && history.length === 0">
+  <p>No history found for this book.</p>
+</div>

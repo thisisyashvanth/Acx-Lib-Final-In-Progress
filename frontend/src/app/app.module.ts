@@ -19,6 +19,8 @@ import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { HrCreateBookComponent } from './components/hr/hr-create-book/hr-create-book.component';
 import { HrRequestsComponent } from './components/hr/hr-requests/hr-requests.component';
 import { EmployeeBooksComponent } from './components/employee/employee-books/employee-books.component';
+import { HrGetAllBooksComponent } from './components/hr/hr-get-all-books/hr-get-all-books.component';
+import { HrGetBookHistoryComponent } from './components/hr/hr-get-book-history/hr-get-book-history.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { EmployeeBooksComponent } from './components/employee/employee-books/emp
     EmployeeNavbarComponent,
     HrCreateBookComponent,
     HrRequestsComponent,
-    EmployeeBooksComponent
+    EmployeeBooksComponent,
+    HrGetAllBooksComponent,
+    HrGetBookHistoryComponent
   ],
   imports: [
     BrowserModule,

@@ -19,6 +19,10 @@ export class BookService {
     return this.http.post(`${this.baseUrl}/add`, req);
   }
 
+  getBookHistory(bookId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${bookId}/users`);
+  }
+
   // hrsignup(req: any) {
   //   return this.http.post(`${this.baseUrl}/hr-signup`, req);
   // }
