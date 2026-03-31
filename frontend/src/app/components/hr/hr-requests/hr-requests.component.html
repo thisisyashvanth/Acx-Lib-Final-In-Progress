@@ -1,23 +1,51 @@
-<h2>HR - Book Requests</h2>
+<section class="hr-requests">
+    <header class="hr-requests__hero">
+        <p class="hr-requests__eyebrow">Request Queue</p>
+        <h2>HR Book Requests</h2>
+        <p class="hr-requests__subtitle">
+            Review borrow, renewal, and return requests from employees and take action quickly.
+        </p>
+    </header>
 
-<div *ngIf="loading">Loading requests...</div>
+    <div class="hr-requests__state" *ngIf="loading">Loading requests...</div>
 
-<div *ngIf="requests.length === 0 && !loading">
-    No requests found.
-</div>
-
-<div *ngFor="let req of requests" class="request-card">
-
-    <p><strong>Employee:</strong> {{ req.employee_name }} ({{ req.employee_id }})</p>
-    <p><strong>Book ID:</strong> {{ req.book_id }}</p>
-    <p><strong>Type:</strong> {{ req.request_type }}</p>
-    <p><strong>Status:</strong> {{ req.status }}</p>
-    <p><strong>Requested At:</strong> {{ req.requested_at | date:'short' }}</p>
-
-    <div *ngIf="req.status === 'PENDING'">
-        <button (click)="review(req.request_id, true)">Approve</button>
-        <button (click)="review(req.request_id, false)">Reject</button>
+    <div class="hr-requests__state hr-requests__state--empty" *ngIf="requests.length === 0 && !loading">
+        No requests found.
     </div>
 
-    <hr>
-</div>
+    <div class="hr-requests__grid" *ngIf="requests.length > 0 && !loading">
+        <article *ngFor="let req of requests" class="request-card">
+            <div class="request-card__top">
+                <div>
+                    <p class="request-card__type">{{ req.request_type }}</p>
+                    <h3>{{ req.employee_name }}</h3>
+                    <p class="request-card__employee">{{ req.employee_id }}</p>
+                </div>
+
+                <span class="request-card__status" [ngClass]="{
+                    'request-card__status--pending': req.status === 'PENDING',
+                    'request-card__status--approved': req.status === 'APPROVED',
+                    'request-card__status--rejected': req.status === 'REJECTED'
+                }">
+                    {{ req.status }}
+                </span>
+            </div>
+
+            <dl class="request-card__meta">
+                <div>
+                    <dt>Book ID</dt>
+                    <dd>{{ req.book_id }}</dd>
+                </div>
+                <div>
+                    <dt>Requested At</dt>
+                    <dd>{{ req.requested_at | date:'mediumDate' }}</dd>
+                </div>
+            </dl>
+
+            <div class="request-card__actions" *ngIf="req.status === 'PENDING'">
+                <button class="request-card__button request-card__button--approve" (click)="review(req.request_id, true)">Approve</button>
+                <button class="request-card__button request-card__button--reject" (click)="review(req.request_id, false)">Reject</button>
+            </div>
+        </article>
+    </div>
+</section>

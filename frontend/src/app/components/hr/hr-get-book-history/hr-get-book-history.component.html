@@ -1,56 +1,68 @@
-<h2>Book History</h2>
+<section class="hr-history">
+  <header class="hr-history__hero">
+    <div>
+      <p class="hr-history__eyebrow">Book History</p>
+      <h2>Borrowing activity timeline</h2>
+      <p class="hr-history__subtitle">
+        Review who borrowed this book, track due dates, and inspect renewal activity across its history.
+      </p>
+    </div>
 
-<div *ngIf="loading">
-  <p>Loading history...</p>
-</div>
+    <label class="hr-history__search">
+      <span>Search history</span>
+      <input type="text" placeholder="Search by employee, ID, or status" [(ngModel)]="searchText" (input)="filterHistory()" />
+    </label>
+  </header>
 
-<div *ngIf="error">
-  <p>{{ error }}</p>
-</div>
+  <div class="hr-history__state" *ngIf="loading">
+    Loading history...
+  </div>
 
+  <div class="hr-history__state hr-history__state--error" *ngIf="error">
+    {{ error }}
+  </div>
 
-<input type="text" placeholder="Search history..." [(ngModel)]="searchText" (input)="filterHistory()" />
+  <div class="hr-history__state hr-history__state--empty" *ngIf="!loading && !error && history.length === 0">
+    No history found for this book.
+  </div>
 
-<div *ngIf="!loading && history.length > 0">
+  <div class="hr-history__state hr-history__state--empty" *ngIf="!loading && !error && history.length > 0 && filteredHistory.length === 0">
+    No history entries matched your search.
+  </div>
 
-  <table border="1" cellpadding="10">
-    <thead>
-      <tr>
-        <th>Employee</th>
-        <th>Employee ID</th>
-        <th>Issue Date</th>
-        <th>Due Date</th>
-        <th>Returned Date</th>
-        <th>Status</th>
-        <th>Renewals</th>
-      </tr>
-    </thead>
+  <div class="hr-history__table-wrap" *ngIf="!loading && filteredHistory.length > 0">
+    <table class="hr-history__table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Employee ID</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Returned Date</th>
+          <th>Status</th>
+          <th>Renewals</th>
+        </tr>
+      </thead>
 
-    <tbody>
-
-      <tr *ngFor="let record of filteredHistory">
-        <td>{{ record.employee_name }}</td>
-        <td>{{ record.employee_id }}</td>
-        <td>{{ record.issue_date | date:'short' }}</td>
-        <td>{{ record.due_date | date:'short' }}</td>
-        <td>{{ record.returned_date ? (record.returned_date | date:'short') : '-' }}</td>
-        <td>
-          <span [ngClass]="{
-            'active': record.status === 'ACTIVE',
-            'returned': record.status === 'RETURNED',
-            'overdue': record.status === 'OVERDUE'
-          }">
-            {{ record.status }}
-          </span>
-        </td>
-        <td>{{ record.renewal_count }}</td>
-      </tr>
-    </tbody>
-
-  </table>
-
-</div>
-
-<div *ngIf="!loading && history.length === 0">
-  <p>No history found for this book.</p>
-</div>
+      <tbody>
+        <tr *ngFor="let record of filteredHistory">
+          <td>{{ record.employee_name }}</td>
+          <td>{{ record.employee_id }}</td>
+          <td>{{ record.issue_date | date:'mediumDate' }}</td>
+          <td>{{ record.due_date | date:'mediumDate' }}</td>
+          <td>{{ record.returned_date ? (record.returned_date | date:'mediumDate') : '-' }}</td>
+          <td>
+            <span class="hr-history__status" [ngClass]="{
+              'hr-history__status--active': record.status === 'ACTIVE',
+              'hr-history__status--returned': record.status === 'RETURNED',
+              'hr-history__status--overdue': record.status === 'OVERDUE'
+            }">
+              {{ record.status }}
+            </span>
+          </td>
+          <td>{{ record.renewal_count }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,35 +1,56 @@
-<h2>My Borrowed Books</h2>
+<section class="employee-books">
+  <header class="employee-books__hero">
+    <p class="employee-books__eyebrow">Employee Shelf</p>
+    <h2>My Borrowed Books</h2>
+    <p class="employee-books__subtitle">
+      Track active books, return deadlines, and renewal activity from one place.
+    </p>
+  </header>
 
-<div *ngIf="loading">Loading...</div>
-
-<div *ngIf="!loading && books.length === 0">
-  No records found.
-</div>
-
-<div *ngFor="let book of books" class="book-card">
-
-  <h3>{{ book.book_title }}</h3>
-
-  <p><strong>Status:</strong> 
-    <span [ngClass]="{
-      'active': book.status === 'ACTIVE',
-      'returned': book.status === 'RETURNED',
-      'overdue': book.status === 'OVERDUE'
-    }">
-      {{ book.status }}
-    </span>
-  </p>
-
-  <p><strong>Issued:</strong> {{ book.issue_date | date:'short' }}</p>
-  <p><strong>Due:</strong> {{ book.due_date | date:'short' }}</p>
-  <p><strong>Returned:</strong> {{ book.returned_date || 'Not yet' }}</p>
-  <p><strong>Renewals:</strong> {{ book.renewal_count }}</p>
-
-  <!-- ACTIONS -->
-  <div *ngIf="book.status === 'ACTIVE'">
-    <button (click)="renewBook(book.borrow_id)">Renew</button>
-    <button (click)="returnBook(book.borrow_id)">Return</button>
+  <div class="employee-books__state" *ngIf="loading">
+    Loading your shelf...
   </div>
 
-  <hr>
-</div>
+  <div class="employee-books__state employee-books__state--empty" *ngIf="!loading && books.length === 0">
+    No borrowed books found yet.
+  </div>
+
+  <div class="employee-books__grid" *ngIf="!loading && books.length > 0">
+    <article *ngFor="let book of books" class="book-card">
+      <div class="book-card__top">
+        <h3>{{ book.book_title }}</h3>
+        <span class="book-card__status" [ngClass]="{
+          'book-card__status--active': book.status === 'ACTIVE',
+          'book-card__status--returned': book.status === 'RETURNED',
+          'book-card__status--overdue': book.status === 'OVERDUE'
+        }">
+          {{ book.status }}
+        </span>
+      </div>
+
+      <dl class="book-card__meta">
+        <div>
+          <dt>Issued</dt>
+          <dd>{{ book.issue_date | date:'mediumDate' }}</dd>
+        </div>
+        <div>
+          <dt>Due</dt>
+          <dd>{{ book.due_date | date:'mediumDate' }}</dd>
+        </div>
+        <div>
+          <dt>Returned</dt>
+          <dd>{{ book.returned_date ? (book.returned_date | date:'mediumDate') : 'Not yet' }}</dd>
+        </div>
+        <div>
+          <dt>Renewals</dt>
+          <dd>{{ book.renewal_count }}</dd>
+        </div>
+      </dl>
+
+      <div class="book-card__actions" *ngIf="book.status === 'ACTIVE'">
+        <button class="book-card__button book-card__button--ghost" (click)="renewBook(book.borrow_id)">Renew</button>
+        <button class="book-card__button book-card__button--primary" (click)="returnBook(book.borrow_id)">Return</button>
+      </div>
+    </article>
+  </div>
+</section>

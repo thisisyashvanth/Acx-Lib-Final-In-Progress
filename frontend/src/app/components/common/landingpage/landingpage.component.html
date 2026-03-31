@@ -1,24 +1,29 @@
-<header>
-    <div>
-        <img src="/assets/logo.png" alt="ACXHANGE Logo">
-    </div>
-</header>
+<section class="landing-page">
+    <div class="landing-page__glow landing-page__glow--top"></div>
+    <div class="landing-page__glow landing-page__glow--mid"></div>
+    <div class="landing-page__glow landing-page__glow--bottom"></div>
 
-<div>
+    <header class="landing-header">
+        <a class="brand" routerLink="/" aria-label="Acxhange home">
+            <img class="brand__logo" src="assets/logo.png" alt="Acxhange logo">
+        </a>
+    </header>
 
-    <div>
-        <p>Acxhange Library</p>
-        <button routerLink="/signin">Sign In</button>
-        <button routerLink="/signup">Sign Up</button>
-    </div>
+    <main class="landing-hero">
+        <section class="access-card" aria-labelledby="access-card-title">
+            <p id="access-card-title" class="access-card__title">Access your library account</p>
+            <a class="access-card__button access-card__button--primary" routerLink="/signin">Sign In</a>
+            <a class="access-card__button access-card__button--secondary" routerLink="/signup">Sign Up</a>
+        </section>
 
-    <div>
-        <h1>Welcome to Acxhange Library</h1>
-        <p>Discover, Learn, and Grow with Knowledge</p>
-    </div>
+        <section class="hero-copy">
+            <p class="hero-copy__eyebrow">Digital knowledge hub</p>
+            <h1>Welcome to<br>Acxhange Library</h1>
+            <p class="hero-copy__text">Discover, Learn, and Grow with Knowledge</p>
+        </section>
+    </main>
 
-</div>
-
-<footer>
-    <p>© 2026 Acxhange Library. All rights reserved.</p>
-</footer>
+    <footer class="landing-footer">
+        <p>&copy; 2026 Acxhange Library. All rights reserved.</p>
+    </footer>
+</section>

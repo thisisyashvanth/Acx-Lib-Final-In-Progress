@@ -1,3 +1,44 @@
-<li routerLink="/add-book" routerLinkActive="active">Add Book</li>
-<li routerLink="/view-requests" routerLinkActive="active">View Requests</li>
-<li routerLink="/hr-get-all-books" routerLinkActive="active">View All Books</li>
+<section class="hr-dashboard">
+  <header class="hr-dashboard__hero">
+    <p class="hr-dashboard__eyebrow">HR Dashboard</p>
+    <h1>Manage the Acxhange library</h1>
+    <p class="hr-dashboard__subtitle">
+      Add new titles, review employee requests, and maintain the book catalog from one admin workspace.
+    </p>
+  </header>
+
+  <section class="hr-dashboard__grid">
+    <a class="hr-dashboard__card hr-dashboard__card--primary" routerLink="/add-book">
+      <span class="hr-dashboard__label">Catalog</span>
+      <h2>Add Book</h2>
+      <p>Create a new library entry and make copies available to employees.</p>
+    </a>
+
+    <a class="hr-dashboard__card" routerLink="/view-requests">
+      <span class="hr-dashboard__label">Requests</span>
+      <h2>View Requests</h2>
+      <p>Review pending borrow, return, and renewal requests in one place.</p>
+    </a>
+
+    <a class="hr-dashboard__card" routerLink="/hr-get-all-books">
+      <span class="hr-dashboard__label">Inventory</span>
+      <h2>View All Books</h2>
+      <p>Check the full catalog and monitor availability across the library.</p>
+    </a>
+  </section>
+
+  <section class="hr-dashboard__highlights" aria-label="HR library highlights">
+    <article>
+      <strong>Central control</strong>
+      <span>Keep core library operations organized in a single dashboard.</span>
+    </article>
+    <article>
+      <strong>Faster reviews</strong>
+      <span>Jump directly into requests or inventory without extra navigation.</span>
+    </article>
+    <article>
+      <strong>Clear workflows</strong>
+      <span>Move from creating books to managing employee activity with less friction.</span>
+    </article>
+  </section>
+</section>

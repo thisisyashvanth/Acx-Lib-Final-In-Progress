@@ -1,12 +1,22 @@
-<nav>
+<nav class="employee-nav">
+  <a class="employee-nav__brand" routerLink="/employee-dashboard">
+    <img class="employee-nav__logo" src="assets/logo.png" alt="Acxhange logo">
+  </a>
 
-  <ul>
-    <li routerLink="/get-all-books" routerLinkActive="active">Books</li>
-    <!-- <li routerLink="/borrow-book" routerLinkActive="active">My Borrowed</li> -->
-  </ul>
+  <div class="employee-nav__links">
+    <a class="employee-nav__link" routerLink="/employee-dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Dashboard
+    </a>
+    <a class="employee-nav__link" routerLink="/get-all-books" routerLinkActive="active">
+      Books
+    </a>
+    <a class="employee-nav__link" routerLink="/my-books" routerLinkActive="active">
+      My Shelf
+    </a>
+  </div>
 
-  <div>
-    <span>User</span>
-    <button (click)="logout()">Logout</button>
+  <div class="employee-nav__actions">
+    <span class="employee-nav__role">Employee</span>
+    <button class="employee-nav__logout" (click)="logout()">Logout</button>
   </div>
 </nav>

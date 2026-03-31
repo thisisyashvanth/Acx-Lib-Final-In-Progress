@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.employee-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(7, 17, 27, 0.96), rgba(10, 21, 34, 0.92));
+  color: #edf3f9;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.employee-nav__brand,
+.employee-nav__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.employee-nav__brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.employee-nav__logo {
+  width: 10.5rem;
+  height: auto;
+  display: block;
+}
+
+.employee-nav__links,
+.employee-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.employee-nav__link,
+.employee-nav__logout {
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.employee-nav__link.active {
+  background: rgba(94, 164, 255, 0.18);
+  border-color: rgba(94, 164, 255, 0.32);
+  color: #cfe6ff;
+}
+
+.employee-nav__role {
+  display: block;
+  color: #9ab2c8;
+  font-size: 0.9rem;
+}
+
+.employee-nav__logout {
+  color: #edf3f9;
+  cursor: pointer;
+}
+
+@media (max-width: 780px) {
+  .employee-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .employee-nav__links,
+  .employee-nav__actions {
+    flex-wrap: wrap;
+  }
+}

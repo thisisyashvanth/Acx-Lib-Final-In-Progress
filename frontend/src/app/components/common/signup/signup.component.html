@@ -1,46 +1,84 @@
-<h2>Create Account</h2>
-<p>Join Acxhange Library to access resources</p>
+<section class="signup-page">
+    <div class="signup-shell">
+        <a class="signup-home" routerLink="/">Back to home</a>
 
-<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <div class="signup-layout">
+            <section class="signup-card">
+                <h2>Create Account</h2>
+                <p class="signup-card__subtitle">Join Acxhange Library to access resources</p>
 
-    <div>
-        <label>Employee ID</label>
-        <input type="text" formControlName="employeeId" placeholder="Enter your EmployeeId" />
-        <small *ngIf="signupForm.get('employeeId')?.touched && signupForm.get('employeeId')?.invalid">
-            EmployeeId is required
-        </small>
+                <form class="signup-form" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                    <div class="signup-grid">
+                        <div class="form-field">
+                            <label for="employeeId">Employee ID</label>
+                            <input id="employeeId" type="text" formControlName="employeeId" placeholder="Enter your Employee ID" />
+                            <small class="error" *ngIf="signupForm.get('employeeId')?.touched && signupForm.get('employeeId')?.invalid">
+                                Employee ID is required
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="name">Full Name</label>
+                            <input id="name" type="text" formControlName="name" placeholder="Enter your name" />
+                            <small class="error" *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid">
+                                Name is required
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">Email Address</label>
+                        <input id="email" type="email" formControlName="email" placeholder="Enter your email" />
+                        <small class="error" *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
+                            Valid email is required
+                        </small>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" formControlName="password" placeholder="Create a password" />
+                        <small class="error" *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+                            Minimum 6 characters required
+                        </small>
+                    </div>
+
+                    <div class="signup-error" *ngIf="errorMessage">
+                        {{ errorMessage }}
+                    </div>
+
+                    <button class="signup-submit" type="submit" [disabled]="signupForm.invalid || loading">
+                        {{ loading ? 'Creating Account...' : 'Sign Up' }}
+                    </button>
+                </form>
+
+                <p class="signup-card__footer">
+                    Already have an account?
+                    <a routerLink="/signin">Sign in</a>
+                </p>
+            </section>
+
+            <section class="signup-copy">
+                <p class="signup-copy__eyebrow">Get Started</p>
+                <h1>Build your library access in minutes</h1>
+                <p class="signup-copy__text">
+                    Create your account to browse resources, request books faster, and stay connected to your team's learning library.
+                </p>
+
+                <div class="signup-copy__stats" aria-hidden="true">
+                    <div>
+                        <strong>1</strong>
+                        <span>Account setup</span>
+                    </div>
+                    <div>
+                        <strong>24/7</strong>
+                        <span>Resource access</span>
+                    </div>
+                    <div>
+                        <strong>Fast</strong>
+                        <span>Book requests</span>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
-
-    <div>
-        <label>Full Name</label>
-        <input type="text" formControlName="name" placeholder="Enter your name" />
-        <small *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid">
-            Name is required
-        </small>
-    </div>
-
-    <div>
-        <label>Email Address</label>
-        <input type="email" formControlName="email" placeholder="Enter your email" />
-        <small *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
-            Valid email is required
-        </small>
-    </div>
-
-    <div>
-        <label>Password</label>
-        <input type="password" formControlName="password" placeholder="Create a password" />
-        <small *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
-            Minimum 6 characters required
-        </small>
-    </div>
-
-    <div *ngIf="errorMessage">
-        {{ errorMessage }}
-    </div>
-
-    <button type="submit" [disabled]="signupForm.invalid || loading">
-        {{ loading ? 'Creating Account...' : 'Sign Up' }}
-    </button>
-
-</form>
+</section>

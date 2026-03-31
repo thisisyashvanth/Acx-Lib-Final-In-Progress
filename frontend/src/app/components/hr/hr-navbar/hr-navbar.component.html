@@ -1,15 +1,25 @@
-<nav>
+<nav class="hr-nav">
+  <a class="hr-nav__brand" routerLink="/hr-dashboard">
+    <img class="hr-nav__logo" src="assets/logo.png" alt="Acxhange logo">
+  </a>
 
-  <ul>
-    <li routerLink="/hr-dashboard" routerLinkActive="active">Dashboard</li>
-    <!-- <li routerLink="/books" routerLinkActive="active">View Books</li>
-    <li routerLink="/create-book" routerLinkActive="active">Add Book</li>
-    <li routerLink="/users" routerLinkActive="active">View Users</li>
-    <li routerLink="/borrow" routerLinkActive="active">Borrow Records</li> -->
-  </ul>
+  <div class="hr-nav__links">
+    <a class="hr-nav__link" routerLink="/hr-dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Dashboard
+    </a>
+    <a class="hr-nav__link" routerLink="/add-book" routerLinkActive="active">
+      Add Book
+    </a>
+    <a class="hr-nav__link" routerLink="/view-requests" routerLinkActive="active">
+      Requests
+    </a>
+    <a class="hr-nav__link" routerLink="/hr-get-all-books" routerLinkActive="active">
+      Inventory
+    </a>
+  </div>
 
-  <div>
-    <span>Admin</span>
-    <button (click)="logout()">Logout</button>
+  <div class="hr-nav__actions">
+    <span class="hr-nav__role">HR Admin</span>
+    <button class="hr-nav__logout" (click)="logout()">Logout</button>
   </div>
 </nav>

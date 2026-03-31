@@ -1,0 +1,101 @@
+:host {
+  display: block;
+}
+
+.hr-dashboard {
+  padding: 2rem;
+  color: #edf3f8;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.hr-dashboard__hero {
+  max-width: 45rem;
+  margin-bottom: 1.75rem;
+}
+
+.hr-dashboard__eyebrow {
+  margin: 0 0 0.5rem;
+  color: #ffcf9a;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hr-dashboard__hero h1,
+.hr-dashboard__card h2,
+.hr-dashboard__highlights strong {
+  margin: 0;
+}
+
+.hr-dashboard__hero h1 {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.02;
+}
+
+.hr-dashboard__subtitle,
+.hr-dashboard__card p,
+.hr-dashboard__highlights span {
+  color: #d5e1eb;
+}
+
+.hr-dashboard__subtitle {
+  margin: 0.75rem 0 0;
+  line-height: 1.7;
+}
+
+.hr-dashboard__grid,
+.hr-dashboard__highlights {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.hr-dashboard__grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.hr-dashboard__card,
+.hr-dashboard__highlights article {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(14, 24, 32, 0.9), rgba(7, 15, 25, 0.96));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+}
+
+.hr-dashboard__card {
+  padding: 1.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hr-dashboard__card--primary {
+  background: linear-gradient(135deg, rgba(187, 117, 34, 0.92), rgba(25, 18, 11, 0.96));
+}
+
+.hr-dashboard__label {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  color: #ffe0ba;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hr-dashboard__highlights {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.hr-dashboard__highlights article {
+  padding: 1.2rem;
+}
+
+.hr-dashboard__highlights strong {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+@media (max-width: 640px) {
+  .hr-dashboard {
+    padding: 1rem;
+  }
+}

@@ -1,2 +1,38 @@
-<li routerLink="/get-all-books" routerLinkActive="active">View All Books</li>
-<li routerLink="/my-books" routerLinkActive="active">View My Shelf</li>
+<section class="employee-dashboard">
+  <header class="employee-dashboard__hero">
+    <p class="employee-dashboard__eyebrow">Employee Dashboard</p>
+    <h1>Welcome to your library workspace</h1>
+    <p class="employee-dashboard__subtitle">
+      Browse available books, manage your shelf, and stay on top of renewals from one place.
+    </p>
+  </header>
+
+  <section class="employee-dashboard__grid">
+    <a class="employee-dashboard__card employee-dashboard__card--primary" routerLink="/get-all-books">
+      <span class="employee-dashboard__label">Explore Collection</span>
+      <h2>View All Books</h2>
+      <p>Browse the library catalog and request your next read.</p>
+    </a>
+
+    <a class="employee-dashboard__card" routerLink="/my-books">
+      <span class="employee-dashboard__label">My Shelf</span>
+      <h2>View Borrowed Books</h2>
+      <p>Track due dates, check statuses, and manage returns.</p>
+    </a>
+  </section>
+
+  <section class="employee-dashboard__highlights" aria-label="Library highlights">
+    <article>
+      <strong>Quick access</strong>
+      <span>Move between the full catalog and your active shelf in a click.</span>
+    </article>
+    <article>
+      <strong>Stay organized</strong>
+      <span>Review borrowed books and handle returns without extra steps.</span>
+    </article>
+    <article>
+      <strong>Keep reading</strong>
+      <span>Use your workspace as the starting point for every library action.</span>
+    </article>
+  </section>
+</section>
