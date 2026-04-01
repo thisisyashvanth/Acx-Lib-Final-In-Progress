@@ -16,10 +16,16 @@
     <a class="hr-nav__link" routerLink="/hr-get-all-books" routerLinkActive="active">
       Inventory
     </a>
+    <a class="hr-nav__link" routerLink="/hr-get-all-users" routerLinkActive="active">
+      Users
+    </a>
+    <a class="hr-nav__link" routerLink="/hr-user-request-history" routerLinkActive="active">
+      History
+    </a>
   </div>
 
   <div class="hr-nav__actions">
-    <span class="hr-nav__role">HR Admin</span>
+    <span class="hr-nav__role">Welcome {{ userName }}</span>
     <button class="hr-nav__logout" (click)="logout()">Logout</button>
   </div>
 </nav>

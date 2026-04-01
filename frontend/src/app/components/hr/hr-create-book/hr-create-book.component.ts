@@ -10,11 +10,11 @@ export class HrCreateBookComponent {
 
   book = {
     title: '',
+    bookNumber: '',
     author: '',
     isbn: '',
     category: '',
-    total_copies: 0,
-    available_copies: 0
+    total_copies: 0
   };
 
   message: string = '';
@@ -22,14 +22,17 @@ export class HrCreateBookComponent {
 
   constructor(private bookService: BookService) { }
 
+  
+  
   onSubmit() {
     this.message = '';
     this.error = '';
+    console.log(this.book.bookNumber);
 
-    if (this.book.available_copies > this.book.total_copies) {
-      this.error = 'Available copies cannot exceed total copies';
-      return;
-    }
+    // if (this.book.available_copies > this.book.total_copies) {
+    //   this.error = 'Available copies cannot exceed total copies';
+    //   return;
+    // }
 
     this.bookService.addBook(this.book).subscribe({
       next: (res: any) => {
@@ -45,11 +48,12 @@ export class HrCreateBookComponent {
   resetForm() {
     this.book = {
       title: '',
+      bookNumber: '',
       author: '',
       isbn: '',
       category: '',
-      total_copies: 0,
-      available_copies: 0
+      total_copies: 0
+      // available_copies: 0
     };
   }
 

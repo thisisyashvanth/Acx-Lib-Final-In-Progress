@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -33,5 +33,15 @@ export class RequestService {
 
   getMyBooks(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/users/my-books`);
+  }
+
+
+  getRequests(status?: string, type?: string): Observable<Request[]> {
+    let params = new HttpParams();
+
+    if (status) params = params.set('status', status);
+    if (type) params = params.set('request_type', type);
+
+    return this.http.get<Request[]>(`${this.baseUrl}/requests`, { params });
   }
 }

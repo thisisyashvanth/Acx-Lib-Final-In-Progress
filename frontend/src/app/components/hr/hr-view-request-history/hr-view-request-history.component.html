@@ -1,0 +1,83 @@
+<section class="employee-catalog">
+    <header class="employee-catalog__hero">
+        <p class="employee-catalog__eyebrow">Request Logs</p>
+        <h2>All Request History</h2>
+        <p class="employee-catalog__subtitle">
+            View and track all user borrowing requests.
+        </p>
+    </header>
+
+    <!-- Search -->
+    <div class="employee-catalog__search">
+        <input type="text" placeholder="Search by book, user or status..." [(ngModel)]="searchText"
+            (input)="filterRequests()" class="employee-catalog__search-input" />
+    </div>
+
+    <!-- Messages -->
+    <div class="hr-create-book__message hr-create-book__message--success" *ngIf="successMessage">
+        {{ successMessage }}
+    </div>
+
+    <div class="hr-create-book__message hr-create-book__message--error" *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Loading -->
+    <div class="employee-catalog__state" *ngIf="loading">
+        Loading request history...
+    </div>
+
+    <!-- Empty -->
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && filteredRequests.length === 0">
+        No request history found.
+    </div>
+
+    <!-- Request Grid -->
+    <div class="employee-catalog__grid" *ngIf="!loading && filteredRequests.length > 0">
+        <article *ngFor="let req of filteredRequests" class="catalog-card">
+
+            <!-- Top -->
+            <div class="catalog-card__top">
+                <div>
+                    <p class="catalog-card__category">{{ req.request_type }}</p>
+                    <h3>{{ req.book_title }}</h3>
+                </div>
+
+                <span class="catalog-card__availability">
+                    {{ req.user_name }}
+                </span>
+            </div>
+
+            <!-- Meta -->
+            <dl class="catalog-card__meta">
+                <!-- <div>
+                    <dt>Request ID</dt>
+                    <dd>{{ req.id }}</dd>
+                </div> -->
+                <div>
+                    <dt>Requested On</dt>
+                    <dd>{{ req.request_date | date:'mediumDate' }}</dd>
+                </div>
+                <div>
+                    <dt>Reviewed On</dt>
+                    <dd>
+                        {{ req.return_date ? (req.return_date | date:'mediumDate') : 'N/A' }}
+                    </dd>
+                </div>
+                <div>
+                    <dt>Status</dt>
+                    <dd>{{ req.status }}</dd>
+                </div>
+            </dl>
+
+            <!-- Actions -->
+            <!-- <div class="catalog-card__actions">
+                <button class="catalog-card__button catalog-card__button--primary" (click)="viewDetails(req)">
+                    View Details
+                </button>
+            </div> -->
+
+        </article>
+    </div>
+</section>

@@ -7,6 +7,7 @@ from fastapi import HTTPException
 def create_book(book: CreateBookReq, db: Session):
     new_book = Book (
         title = book.title,
+        bookNumber = book.bookNumber,
         author = book.author,
         isbn = book.isbn,
         category = book.category,

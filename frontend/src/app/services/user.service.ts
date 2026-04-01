@@ -14,4 +14,16 @@ export class UserService {
   getMyBooks(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/my-books`);
   }
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/get-all`);
+  }
+
+  getUserHistory(userId: number) {
+    return this.http.get(`${this.baseUrl}/${userId}/history`);
+  }
+
+  getUserById(userId: number) {
+    return this.http.get(`${this.baseUrl}/${userId}`);
+  }
 }

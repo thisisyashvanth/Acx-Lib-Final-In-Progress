@@ -1,0 +1,75 @@
+<section class="employee-catalog">
+    <header class="employee-catalog__hero">
+        <p class="employee-catalog__eyebrow">User Directory</p>
+        <h2>All Users</h2>
+        <p class="employee-catalog__subtitle">
+            Browse all users and view their borrowing history.
+        </p>
+    </header>
+
+    <div class="employee-catalog__search">
+        <input type="text" placeholder="Search by name or employee ID..." [(ngModel)]="searchText"
+            (input)="filterUsers()" class="employee-catalog__search-input" />
+    </div>
+
+    <!-- Success / Error Messages -->
+    <div class="hr-create-book__message hr-create-book__message--success" *ngIf="successMessage">
+        {{ successMessage }}
+    </div>
+
+    <div class="hr-create-book__message hr-create-book__message--success" *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Loading -->
+    <div class="employee-catalog__state" *ngIf="loading">
+        Loading users...
+    </div>
+
+    <!-- Empty -->
+    <div class="employee-catalog__state employee-catalog__state--empty" *ngIf="!loading && users.length === 0">
+        No users available.
+    </div>
+
+    <!-- Users Grid -->
+    <div class="employee-catalog__grid" *ngIf="!loading && users.length > 0">
+        <article *ngFor="let user of filteredUsers" class="catalog-card">
+
+            <!-- Top Section -->
+            <div class="catalog-card__top">
+                <div>
+                    <p class="catalog-card__category">{{ user.role }}</p>
+                    <h3>{{ user.name }}</h3>
+                </div>
+
+                <span class="catalog-card__availability">
+                    {{ user.email }}
+                </span>
+            </div>
+
+            <!-- Meta Info -->
+            <dl class="catalog-card__meta">
+                <div>
+                    <dt>Employee ID</dt>
+                    <dd>{{ user.employee_id }}</dd>
+                </div>
+                <div>
+                    <dt>Is Restricted ?</dt>
+                    <dd>{{ user.is_restricted === true ? 'Yes' : 'No' }}</dd>
+                </div>
+                <!-- <div>
+                    <dt>Role</dt>
+                    <dd>{{ user.role }}</dd>
+                </div> -->
+            </dl>
+
+            <!-- Actions -->
+            <div class="catalog-card__actions">
+                <button class="catalog-card__button catalog-card__button--primary" (click)="viewHistory(user.id)">
+                    View History
+                </button>
+            </div>
+
+        </article>
+    </div>
+</section>

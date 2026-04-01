@@ -10,6 +10,9 @@ import { UserService } from '../../../services/user.service';
 })
 export class EmployeeBooksComponent {
 
+  message: string = '';
+  messageType: 'success' | 'error' | '' = '';
+
   books: any[] = [];
   loading = false;
 
@@ -21,11 +24,21 @@ export class EmployeeBooksComponent {
 
   ngOnInit() {
     if (!this.authService.getToken()) {
-      alert('User not logged in');
+      this.showMessage('User not logged in', 'error');
       return;
     }
 
     this.loadBooks();
+  }
+
+  showMessage(text: string, type: 'success' | 'error') {
+    this.message = text;
+    this.messageType = type;
+
+    setTimeout(() => {
+      this.message = '';
+      this.messageType = '';
+    }, 3000);
   }
 
   loadBooks() {
@@ -38,7 +51,7 @@ export class EmployeeBooksComponent {
       },
       error: (err) => {
         console.error(err);
-        alert('Failed to load books');
+        this.showMessage('Failed to load books', 'error');
         this.loading = false;
       }
     });
@@ -47,11 +60,11 @@ export class EmployeeBooksComponent {
   renewBook(borrowId: number) {
     this.requestService.renew(borrowId).subscribe({
       next: () => {
-        alert('Renew request sent');
-        this.loadBooks(); // 🔄 refresh
+        this.showMessage('Renew request sent', 'success');
+        this.loadBooks(); // refresh
       },
       error: (err) => {
-        alert(err.error.detail);
+        this.showMessage(err.error?.detail || 'Failed to renew', 'error');
       }
     });
   }
@@ -59,11 +72,11 @@ export class EmployeeBooksComponent {
   returnBook(borrowId: number) {
     this.requestService.returnBook(borrowId).subscribe({
       next: () => {
-        alert('Return request sent');
-        this.loadBooks(); // 🔄 refresh
+        this.showMessage('Return request sent', 'success');
+        this.loadBooks(); // refresh
       },
       error: (err) => {
-        alert(err.error.detail);
+        this.showMessage(err.error?.detail || 'Failed to return book', 'error');
       }
     });
   }

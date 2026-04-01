@@ -51,6 +51,8 @@ def request_borrow(book_id: int, db: Session = Depends(get_db), user=Depends(get
         request_type=RequestType.BORROW
     )
 
+
+
     db.add(req)
     db.commit()
     db.refresh(req)
@@ -121,6 +123,83 @@ def request_return(borrow_id: int, db: Session = Depends(get_db), user=Depends(g
 
 
 
+# @router.post("/{request_id}/review")
+# def review_request(
+#     request_id: int,
+#     approve: bool,
+#     db: Session = Depends(get_db),
+#     user=Depends(get_current_user)
+# ):
+#     if user.role != "HR":
+#         raise HTTPException(status_code=403, detail="Only HR can review")
+
+#     req = db.query(Requests).filter_by(id=request_id).first()
+#     if not req:
+#         raise HTTPException(status_code=404, detail="Request not found")
+
+#     if req.status != RequestStatus.PENDING:
+#         raise HTTPException(status_code=400, detail="Already reviewed")
+
+#     if not approve:
+#         req.status = RequestStatus.REJECTED
+
+#     else:
+#         req.status = RequestStatus.APPROVED
+
+#         if req.request_type == RequestType.BORROW:
+
+#             book = db.query(Book).filter_by(id=req.book_id).first()
+
+#             if book.available_copies <= 0:
+#                 raise HTTPException(status_code=400, detail="No copies available")
+
+#             due_date = datetime.now(timezone.utc) + timedelta(days=28)
+
+#             borrow = BorrowRecord(
+#                 user_id=req.user_id,
+#                 book_id=req.book_id,
+#                 due_date=due_date,
+#                 renewal_count=0
+#             )
+
+#             db.add(borrow)
+#             book.available_copies -= 1
+
+#         elif req.request_type == RequestType.RENEW:
+
+#             borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
+
+#             # ✅ enforce again at approval level (important!)
+#             if borrow.renewal_count >= 1:
+#                 raise HTTPException(
+#                     status_code=400,
+#                     detail="Renewal limit reached"
+#                 )
+
+#             borrow.due_date += timedelta(days=28)
+#             borrow.renewal_count += 1
+
+#         elif req.request_type == RequestType.RETURN:
+
+#             borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
+
+#             borrow.status = TransactionStatus.RETURNED
+#             borrow.returned_date = datetime.now(timezone.utc)
+
+#             book = db.query(Book).filter_by(id=borrow.book_id).first()
+#             book.available_copies += 1
+
+#     req.reviewed_by = user.id
+#     req.reviewed_at = datetime.now(timezone.utc)
+
+#     db.commit()
+
+#     return {"message": f"Request {'approved' if approve else 'rejected'}"}
+
+
+
+
+
 @router.post("/{request_id}/review")
 def review_request(
     request_id: int,
@@ -138,61 +217,107 @@ def review_request(
     if req.status != RequestStatus.PENDING:
         raise HTTPException(status_code=400, detail="Already reviewed")
 
+    now = datetime.now(timezone.utc)
+
+    # ❌ If rejected manually
     if not approve:
         req.status = RequestStatus.REJECTED
+        req.reviewed_by = user.id
+        req.reviewed_at = now
 
-    else:
+        db.commit()
+        return {"message": "Request rejected"}
+
+    # ✅ APPROVAL FLOW
+    if req.request_type == RequestType.BORROW:
+
+        # 🔒 Lock book row (prevents race condition)
+        book = db.query(Book).filter_by(id=req.book_id).with_for_update().first()
+
+        if not book:
+            raise HTTPException(status_code=404, detail="Book not found")
+
+        # ❌ No copies → reject this request
+        if book.available_copies <= 0:
+            req.status = RequestStatus.REJECTED
+            req.reviewed_by = user.id
+            req.reviewed_at = now
+            req.remarks = "Auto-rejected: No copies available"
+
+            db.commit()
+            return {"message": "No copies available. Request auto-rejected."}
+
+        # ✅ Approve request
         req.status = RequestStatus.APPROVED
 
-        if req.request_type == RequestType.BORROW:
+        due_date = now + timedelta(days=28)
 
-            book = db.query(Book).filter_by(id=req.book_id).first()
+        borrow = BorrowRecord(
+            user_id=req.user_id,
+            book_id=req.book_id,
+            due_date=due_date,
+            renewal_count=0
+        )
 
-            if book.available_copies <= 0:
-                raise HTTPException(status_code=400, detail="No copies available")
+        db.add(borrow)
 
-            due_date = datetime.now(timezone.utc) + timedelta(days=28)
+        # 📉 Reduce copies
+        book.available_copies -= 1
 
-            borrow = BorrowRecord(
-                user_id=req.user_id,
-                book_id=req.book_id,
-                due_date=due_date,
-                renewal_count=0
+        # 🚨 Auto reject remaining pending requests
+        if book.available_copies == 0:
+            db.query(Requests).filter(
+                Requests.book_id == req.book_id,
+                Requests.status == RequestStatus.PENDING
+            ).update(
+                {
+                    Requests.status: RequestStatus.REJECTED,
+                    Requests.reviewed_by: user.id,
+                    Requests.reviewed_at: now,
+                    Requests.remarks: "Auto-rejected: No copies available"
+                },
+                synchronize_session=False
             )
 
-            db.add(borrow)
-            book.available_copies -= 1
+    elif req.request_type == RequestType.RENEW:
 
-        elif req.request_type == RequestType.RENEW:
+        borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
 
-            borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
+        if not borrow:
+            raise HTTPException(status_code=404, detail="Borrow record not found")
 
-            # ✅ enforce again at approval level (important!)
-            if borrow.renewal_count >= 1:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Renewal limit reached"
-                )
+        if borrow.renewal_count >= 1:
+            raise HTTPException(status_code=400, detail="Renewal limit reached")
 
-            borrow.due_date += timedelta(days=28)
-            borrow.renewal_count += 1
+        borrow.due_date += timedelta(days=28)
+        borrow.renewal_count += 1
 
-        elif req.request_type == RequestType.RETURN:
+        req.status = RequestStatus.APPROVED
 
-            borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
+    elif req.request_type == RequestType.RETURN:
 
-            borrow.status = TransactionStatus.RETURNED
-            borrow.returned_date = datetime.now(timezone.utc)
+        borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
 
-            book = db.query(Book).filter_by(id=borrow.book_id).first()
+        if not borrow:
+            raise HTTPException(status_code=404, detail="Borrow record not found")
+
+        borrow.status = TransactionStatus.RETURNED
+        borrow.returned_date = now
+
+        book = db.query(Book).filter_by(id=borrow.book_id).first()
+        if book:
             book.available_copies += 1
 
+        req.status = RequestStatus.APPROVED
+
+    # ✅ Common review metadata
     req.reviewed_by = user.id
-    req.reviewed_at = datetime.now(timezone.utc)
+    req.reviewed_at = now
 
     db.commit()
 
-    return {"message": f"Request {'approved' if approve else 'rejected'}"}
+    return {"message": "Request approved"}
+
 
 
 
@@ -227,6 +352,7 @@ def get_all_requests(
             "employee_id": r.user.employee_id,
             "employee_name": r.user.name,
             "book_id": r.book_id,
+            "book_name": r.book.title,
             "request_type": r.request_type,
             "status": r.status,
             "requested_at": r.requested_at,

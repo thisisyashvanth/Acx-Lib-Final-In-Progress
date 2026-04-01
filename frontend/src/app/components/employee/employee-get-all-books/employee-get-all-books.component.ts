@@ -14,6 +14,9 @@ export class EmployeeGetAllBooksComponent {
   loading: boolean = false;
   errorMessage: string = '';
 
+  successMessage: string = '';
+  errorActionMessage: string = '';
+
   constructor(private bookService: BookService, private router: Router, private requestService: RequestService) { }
 
   ngOnInit(): void {
@@ -42,10 +45,12 @@ export class EmployeeGetAllBooksComponent {
     this.requestService.borrow(bookId)
       .subscribe({
         next: (res) => {
-          alert('Borrow request sent');
+          this.successMessage = 'Borrow Request Sent Successfully.'
+          // alert('Borrow request sent');
         },
         error: (err) => {
-          alert(err.error.detail);
+          this.errorActionMessage = err.error?.detail || 'Borrow failed';
+          // alert(err.error.detail);
         }
       });
   }
@@ -54,10 +59,12 @@ export class EmployeeGetAllBooksComponent {
     this.requestService.renew(borrowId)
       .subscribe({
         next: () => {
-          alert('Renew request sent');
+          this.successMessage = 'Renew Request Sent Successfully';
+          // alert('Renew request sent');
         },
         error: (err) => {
-          alert(err.error.detail);
+          this.errorActionMessage = err.error?.detail || 'Renew Failed';
+          // alert(err.error.detail);
         }
       });
   }
@@ -66,11 +73,18 @@ export class EmployeeGetAllBooksComponent {
     this.requestService.returnBook(borrowId)
       .subscribe({
         next: () => {
-          alert('Return request sent');
+          this.successMessage = 'Return Request Sent Successfully';
+          // alert('Return request sent');
         },
         error: (err) => {
-          alert(err.error.detail);
+          this.errorActionMessage = err.error?.detail || 'Return Failed';
+          // alert(err.error.detail);
         }
       });
+  }
+
+  clearMessages() {
+    this.successMessage = '';
+    this.errorActionMessage = '';
   }
 }

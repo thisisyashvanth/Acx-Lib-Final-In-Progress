@@ -16,6 +16,11 @@
         </div>
 
         <div class="form-field">
+          <label for="bookNumber">Book Number</label>
+          <input id="bookNumber" type="text" [(ngModel)]="book.bookNumber" name="bookNumber" required />
+        </div>
+
+        <div class="form-field">
           <label for="author">Author</label>
           <input id="author" type="text" [(ngModel)]="book.author" name="author" required />
         </div>
@@ -35,10 +40,10 @@
           <input id="totalCopies" type="number" [(ngModel)]="book.total_copies" name="total_copies" required />
         </div>
 
-        <div class="form-field">
+        <!-- <div class="form-field">
           <label for="availableCopies">Available Copies</label>
           <input id="availableCopies" type="number" [(ngModel)]="book.available_copies" name="available_copies" required />
-        </div>
+        </div> -->
       </div>
 
       <button class="hr-create-book__submit" type="submit" [disabled]="bookForm.invalid">

@@ -3,14 +3,23 @@
         <div>
             <p class="hr-catalog__eyebrow">HR Inventory</p>
             <h2>Available Books</h2>
-            <p class="hr-catalog__subtitle">Search the full catalog, manage requests, and inspect book-level history from one screen.</p>
+            <p class="hr-catalog__subtitle">Search the full catalog, manage requests, and inspect book-level history
+                from one screen.</p>
         </div>
 
         <label class="hr-catalog__search">
             <span>Search books</span>
-            <input type="text" placeholder="Search by title, author, ISBN, or category" [(ngModel)]="searchText" (input)="filterBooks()" />
+            <input type="text" placeholder="Search by title, author, ISBN, or category" [(ngModel)]="searchText"
+                (input)="filterBooks()" />
         </label>
     </header>
+
+    <div *ngIf="message" class="hr-catalog__message" [ngClass]="{
+       'hr-catalog__message--success': messageType === 'success',
+       'hr-catalog__message--error': messageType === 'error'
+     }">
+        {{ message }}
+    </div>
 
     <div class="hr-catalog__state" *ngIf="loading">
         Loading books...
@@ -24,7 +33,8 @@
         No books available.
     </div>
 
-    <div class="hr-catalog__state hr-catalog__state--empty" *ngIf="!loading && !errorMessage && books.length > 0 && filteredBooks.length === 0">
+    <div class="hr-catalog__state hr-catalog__state--empty"
+        *ngIf="!loading && !errorMessage && books.length > 0 && filteredBooks.length === 0">
         No books matched your search.
     </div>
 
@@ -33,7 +43,7 @@
             <div class="hr-catalog-card__top">
                 <div>
                     <p class="hr-catalog-card__category">{{ book.category || 'General' }}</p>
-                    <h3>{{ book.title }}</h3>
+                    <h3>{{ book.title }} - {{ book.bookNumber }}</h3>
                 </div>
                 <span class="hr-catalog-card__availability" [ngClass]="{
                     'hr-catalog-card__availability--in': book.available_copies > 2,
@@ -64,13 +74,16 @@
             </dl>
 
             <div class="hr-catalog-card__actions">
-                <button class="hr-catalog-card__button hr-catalog-card__button--primary" (click)="borrowBook(book.id)" [disabled]="book.available_copies === 0">
+                <button class="hr-catalog-card__button hr-catalog-card__button--primary" (click)="borrowBook(book.id)"
+                    [disabled]="book.available_copies === 0">
                     Borrow
                 </button>
-                <button class="hr-catalog-card__button" (click)="renewBook(book.borrow_id)" [disabled]="!book.borrow_id">
+                <button class="hr-catalog-card__button" (click)="renewBook(book.borrow_id)"
+                    [disabled]="!book.borrow_id">
                     Renew
                 </button>
-                <button class="hr-catalog-card__button" (click)="returnBook(book.borrow_id)" [disabled]="!book.borrow_id">
+                <button class="hr-catalog-card__button" (click)="returnBook(book.borrow_id)"
+                    [disabled]="!book.borrow_id">
                     Return
                 </button>
                 <button class="hr-catalog-card__button hr-catalog-card__button--history" (click)="viewHistory(book.id)">

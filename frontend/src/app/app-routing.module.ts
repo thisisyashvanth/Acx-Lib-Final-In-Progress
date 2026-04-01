@@ -14,6 +14,9 @@ import { HrRequestsComponent } from './components/hr/hr-requests/hr-requests.com
 import { EmployeeBooksComponent } from './components/employee/employee-books/employee-books.component';
 import { HrGetAllBooksComponent } from './components/hr/hr-get-all-books/hr-get-all-books.component';
 import { HrGetBookHistoryComponent } from './components/hr/hr-get-book-history/hr-get-book-history.component';
+import { HrGetAllUsersComponent } from './components/hr/hr-get-all-users/hr-get-all-users.component';
+import { HrViewUserHistoryComponent } from './components/hr/hr-view-user-history/hr-view-user-history.component';
+import { HrViewRequestHistoryComponent } from './components/hr/hr-view-request-history/hr-view-request-history.component';
 
 const routes: Routes = [
   { path: '', component: LandingpageComponent },
@@ -21,16 +24,19 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'hr-signup', component: HrsignupComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
-  
+
   { path: 'employee-dashboard', component: EmployeeDashboardComponent },
   { path: 'get-all-books', component: EmployeeGetAllBooksComponent },
   { path: 'my-books', component: EmployeeBooksComponent },
-  
+
   { path: 'hr-dashboard', component: HrDashboardComponent, canActivate: [roleGuard] },
   { path: 'add-book', component: HrCreateBookComponent, canActivate: [roleGuard] },
   { path: 'view-requests', component: HrRequestsComponent, canActivate: [roleGuard] },
   { path: 'books/:id/history', component: HrGetBookHistoryComponent, canActivate: [roleGuard] },
-  { path: 'hr-get-all-books', component: HrGetAllBooksComponent, canActivate: [roleGuard] }
+  { path: 'hr-get-all-books', component: HrGetAllBooksComponent, canActivate: [roleGuard] },
+  { path: 'hr-get-all-users', component: HrGetAllUsersComponent, canActivate: [roleGuard] },
+  { path: 'hr-user-view-history/:id', component: HrViewUserHistoryComponent, canActivate: [roleGuard] },
+  { path: 'hr-user-request-history', component: HrViewRequestHistoryComponent, canActivate: [roleGuard] },
 ];
 
 @NgModule({

@@ -7,14 +7,37 @@
         </p>
     </header>
 
-    <div class="hr-requests__state" *ngIf="loading">Loading requests...</div>
+    <div class="hr-requests__filter">
+        <label>Filter by Book:</label>
 
-    <div class="hr-requests__state hr-requests__state--empty" *ngIf="requests.length === 0 && !loading">
-        No requests found.
+        <select [(ngModel)]="selectedBook" (change)="applyFilter()">
+            <option value="ALL">All Books</option>
+            <option *ngFor="let book of uniqueBooks" [value]="book">
+                {{ book }}
+            </option>
+        </select>
     </div>
 
-    <div class="hr-requests__grid" *ngIf="requests.length > 0 && !loading">
-        <article *ngFor="let req of requests" class="request-card">
+    <div *ngIf="message" class="hr-message" [ngClass]="{
+       'hr-message--success': messageType === 'success',
+       'hr-message--error': messageType === 'error'
+     }">
+        {{ message }}
+    </div>
+
+    <div class="hr-requests__state" *ngIf="loading">Loading requests...</div>
+
+    <div class="hr-requests__state hr-requests__state--empty" *ngIf="filteredRequests.length === 0 && !loading">
+        No pending requests.
+    </div>
+
+
+
+
+    <div class="hr-requests__grid" *ngIf="filteredRequests.length > 0 && !loading">
+        <article *ngFor="let req of filteredRequests" class="request-card">
+            <!-- <div class="hr-requests__grid" *ngIf="requests.length > 0 && !loading">
+            <article *ngFor="let req of requests" class="request-card"> -->
             <div class="request-card__top">
                 <div>
                     <p class="request-card__type">{{ req.request_type }}</p>
@@ -33,8 +56,8 @@
 
             <dl class="request-card__meta">
                 <div>
-                    <dt>Book ID</dt>
-                    <dd>{{ req.book_id }}</dd>
+                    <dt>Book Name</dt>
+                    <dd>{{ req.book_name }}</dd>
                 </div>
                 <div>
                     <dt>Requested At</dt>
@@ -43,8 +66,10 @@
             </dl>
 
             <div class="request-card__actions" *ngIf="req.status === 'PENDING'">
-                <button class="request-card__button request-card__button--approve" (click)="review(req.request_id, true)">Approve</button>
-                <button class="request-card__button request-card__button--reject" (click)="review(req.request_id, false)">Reject</button>
+                <button class="request-card__button request-card__button--approve"
+                    (click)="review(req.request_id, true)">Approve</button>
+                <button class="request-card__button request-card__button--reject"
+                    (click)="review(req.request_id, false)">Reject</button>
             </div>
         </article>
     </div>

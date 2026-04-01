@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class CreateBookResp(BaseModel):
     title: str
+    bookNumber: str
     author: str
     isbn: str
     category: str | None = None
@@ -17,6 +18,7 @@ class CreateBookResp(BaseModel):
 class CreateBookReq(BaseModel):
     title: str
     author: str
+    bookNumber: str
     isbn: str
     category: str
     total_copies: int
@@ -25,6 +27,7 @@ class CreateBookReq(BaseModel):
 class GetBookResp(BaseModel):
     id: int
     title: str
+    bookNumber: str
     author: str
     isbn: str
     category: str

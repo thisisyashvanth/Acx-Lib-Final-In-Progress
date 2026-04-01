@@ -1,15 +1,33 @@
-<div>
+<section class="unauthorized-page">
+    <div class="unauthorized-shell">
+        <article class="unauthorized-card">
+            <p class="unauthorized-card__eyebrow">Restricted Route</p>
+            <p class="unauthorized-card__code">403</p>
+            <h1>Access Denied</h1>
+            <p class="unauthorized-card__lead">
+                You are not authorized to access this page. If you believe this is a mistake,
+                please contact your administrator.
+            </p>
 
-    <h2>Access Denied</h2>
-    <p>You are not authorized to access this page.</p>
-    <p>If you believe this is a mistake, please contact your administrator.</p>
+            <div class="unauthorized-card__actions">
+                <button class="unauthorized-card__button unauthorized-card__button--primary" (click)="goToDashboard()">
+                    Go to Dashboard
+                </button>
+            </div>
+        </article>
 
-    <div>
-        <button routerLink="/employee-dashboard">Go to Dashboard</button>
+
+        <aside class="unauthorized-note">
+            <h2>Why you're seeing this</h2>
+            <p>
+                Access controls help keep employee and HR resources visible only to the right people.
+            </p>
+
+            <ul class="unauthorized-note__list">
+                <li>Your account may not have the required role for this route.</li>
+                <li>You may need to sign in again with the correct credentials.</li>
+                <li>An administrator can confirm or update your permissions.</li>
+            </ul>
+        </aside>
     </div>
-
-</div>
-
-<div>
-    <p>Secure access ensures the right resources reach the right people.</p>
-</div>
+</section>

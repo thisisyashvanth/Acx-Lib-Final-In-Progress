@@ -10,6 +10,8 @@ import { RequestService } from '../../../services/request.service';
 })
 export class HrGetAllBooksComponent {
 
+  message: string = '';
+  messageType: 'success' | 'error' | '' = '';
 
   books: any[] = [];
   loading: boolean = false;
@@ -33,6 +35,8 @@ export class HrGetAllBooksComponent {
         this.books = res;
         this.filteredBooks = res;
         this.loading = false;
+        console.log(res);
+
       },
       error: (err) => {
         this.loading = false;
@@ -55,39 +59,42 @@ export class HrGetAllBooksComponent {
 
 
   borrowBook(bookId: number) {
-    this.requestService.borrow(bookId)
-      .subscribe({
-        next: (res) => {
-          alert('Borrow request sent');
-        },
-        error: (err) => {
-          alert(err.error.detail);
-        }
-      });
+    this.requestService.borrow(bookId).subscribe({
+      next: () => {
+        this.message = 'Borrow request sent successfully';
+        this.messageType = 'success';
+      },
+      error: (err) => {
+        this.message = err.error.detail || 'Failed to send borrow request';
+        this.messageType = 'error';
+      }
+    });
   }
 
   renewBook(borrowId: number) {
-    this.requestService.renew(borrowId)
-      .subscribe({
-        next: () => {
-          alert('Renew request sent');
-        },
-        error: (err) => {
-          alert(err.error.detail);
-        }
-      });
+    this.requestService.renew(borrowId).subscribe({
+      next: () => {
+        this.message = 'Renew request sent successfully';
+        this.messageType = 'success';
+      },
+      error: (err) => {
+        this.message = err.error.detail || 'Failed to renew';
+        this.messageType = 'error';
+      }
+    });
   }
 
   returnBook(borrowId: number) {
-    this.requestService.returnBook(borrowId)
-      .subscribe({
-        next: () => {
-          alert('Return request sent');
-        },
-        error: (err) => {
-          alert(err.error.detail);
-        }
-      });
+    this.requestService.returnBook(borrowId).subscribe({
+      next: () => {
+        this.message = 'Return request sent successfully';
+        this.messageType = 'success';
+      },
+      error: (err) => {
+        this.message = err.error.detail || 'Failed to return book';
+        this.messageType = 'error';
+      }
+    });
   }
 
   viewHistory(bookId: number) {

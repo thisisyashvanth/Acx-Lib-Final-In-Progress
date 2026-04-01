@@ -46,3 +46,33 @@ def get_user_by_id(id: int, db: Session = Depends(get_db)):
 @router.delete("/{id}", response_model=DeleteUserResp)
 def delete_user(id: int, db: Session = Depends(get_db)):
     return user_service.delete_user(id, db)
+
+
+@router.get("/{id}/history")
+def get_user_history(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    records = db.query(BorrowRecord).filter_by(user_id=id).all()
+
+    if not records:
+        return []
+
+    return [
+        {
+            "borrow_id": r.id,
+            "status": r.status,
+            "borrow_date": r.issue_date,
+            "due_date": r.due_date,
+            "return_date": r.returned_date,
+            "renewal_count": r.renewal_count,
+            "book": {
+                "id": r.book.id,
+                "title": r.book.title,
+                "author": r.book.author,
+                "category": r.book.category
+            }
+        }
+        for r in records
+    ]

@@ -2,8 +2,17 @@
     <header class="employee-catalog__hero">
         <p class="employee-catalog__eyebrow">Library Catalog</p>
         <h2>Available Books</h2>
-        <p class="employee-catalog__subtitle">Browse the full collection and request, renew, or return books from one workspace.</p>
+        <p class="employee-catalog__subtitle">Browse the full collection and request, renew, or return books from one
+            workspace.</p>
     </header>
+
+    <div class="hr-create-book__message hr-create-book__message--success" *ngIf="successMessage">
+        {{ successMessage }}
+    </div>
+
+    <div class="hr-create-book__message hr-create-book__message--success" *ngIf="errorActionMessage">
+        {{ errorActionMessage }}
+    </div>
 
     <div class="employee-catalog__state" *ngIf="loading">
         Loading books...
@@ -13,7 +22,8 @@
         {{ errorMessage }}
     </div>
 
-    <div class="employee-catalog__state employee-catalog__state--empty" *ngIf="!loading && !errorMessage && books.length === 0">
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && !errorMessage && books.length === 0">
         No books available.
     </div>
 
@@ -53,7 +63,8 @@
             </dl>
 
             <div class="catalog-card__actions">
-                <button class="catalog-card__button catalog-card__button--primary" (click)="borrowBook(book.id)" [disabled]="book.available_copies === 0">
+                <button class="catalog-card__button catalog-card__button--primary" (click)="borrowBook(book.id)"
+                    [disabled]="book.available_copies === 0">
                     Borrow
                 </button>
 

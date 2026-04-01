@@ -8,6 +8,7 @@ class Book(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     title = Column(String(50), nullable=False)
+    bookNumber = Column(String(10), nullable=False, unique=True)
     author = Column(String(50), nullable=False)
     isbn = Column(String(20), unique=True, nullable=False)
     category = Column(String(50))
