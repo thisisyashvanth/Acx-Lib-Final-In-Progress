@@ -74,7 +74,7 @@
             </dl>
 
             <div class="hr-catalog-card__actions">
-                <button class="hr-catalog-card__button hr-catalog-card__button--primary" (click)="borrowBook(book.id)"
+                <!-- <button class="hr-catalog-card__button hr-catalog-card__button--primary" (click)="borrowBook(book.id)"
                     [disabled]="book.available_copies === 0">
                     Borrow
                 </button>
@@ -85,7 +85,7 @@
                 <button class="hr-catalog-card__button" (click)="returnBook(book.borrow_id)"
                     [disabled]="!book.borrow_id">
                     Return
-                </button>
+                </button> -->
                 <button class="hr-catalog-card__button hr-catalog-card__button--history" (click)="viewHistory(book.id)">
                     View History
                 </button>
