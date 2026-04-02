@@ -24,6 +24,7 @@ import { HrGetBookHistoryComponent } from './components/hr/hr-get-book-history/h
 import { HrGetAllUsersComponent } from './components/hr/hr-get-all-users/hr-get-all-users.component';
 import { HrViewUserHistoryComponent } from './components/hr/hr-view-user-history/hr-view-user-history.component';
 import { HrViewRequestHistoryComponent } from './components/hr/hr-view-request-history/hr-view-request-history.component';
+import { EmployeeHistoryComponent } from './components/employee/employee-history/employee-history.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { HrViewRequestHistoryComponent } from './components/hr/hr-view-request-h
     HrGetBookHistoryComponent,
     HrGetAllUsersComponent,
     HrViewUserHistoryComponent,
-    HrViewRequestHistoryComponent
+    HrViewRequestHistoryComponent,
+    EmployeeHistoryComponent
   ],
   imports: [
     BrowserModule,

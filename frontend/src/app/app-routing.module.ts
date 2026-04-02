@@ -17,6 +17,7 @@ import { HrGetBookHistoryComponent } from './components/hr/hr-get-book-history/h
 import { HrGetAllUsersComponent } from './components/hr/hr-get-all-users/hr-get-all-users.component';
 import { HrViewUserHistoryComponent } from './components/hr/hr-view-user-history/hr-view-user-history.component';
 import { HrViewRequestHistoryComponent } from './components/hr/hr-view-request-history/hr-view-request-history.component';
+import { EmployeeHistoryComponent } from './components/employee/employee-history/employee-history.component';
 
 const routes: Routes = [
   { path: '', component: LandingpageComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'employee-dashboard', component: EmployeeDashboardComponent },
   { path: 'get-all-books', component: EmployeeGetAllBooksComponent },
   { path: 'my-books', component: EmployeeBooksComponent },
+  { path: 'employee-history', component: EmployeeHistoryComponent },
 
   { path: 'hr-dashboard', component: HrDashboardComponent, canActivate: [roleGuard] },
   { path: 'add-book', component: HrCreateBookComponent, canActivate: [roleGuard] },

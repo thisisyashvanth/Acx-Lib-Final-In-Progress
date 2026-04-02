@@ -80,6 +80,18 @@ def request_renew(borrow_id: int, db: Session = Depends(get_db), user=Depends(ge
             detail="Renewal Limit Reached. Please Return The Book."
         )
 
+    existing_request = db.query(Requests).filter(
+        Requests.user_id == user.id,
+        Requests.borrow_id == borrow_id,
+        Requests.status == RequestStatus.PENDING
+    ).first()
+
+    if existing_request:
+        raise HTTPException(
+        status_code=400,
+        detail=f"{existing_request.request_type.value} request already pending"
+    )
+
     req = Requests(
         user_id=user.id,
         book_id=borrow.book_id,
@@ -108,6 +120,18 @@ def request_return(borrow_id: int, db: Session = Depends(get_db), user=Depends(g
     if borrow.status != TransactionStatus.ACTIVE:
         raise HTTPException(status_code=400, detail="Already Returned.")
 
+    existing_request = db.query(Requests).filter(
+        Requests.user_id == user.id,
+        Requests.borrow_id == borrow_id,
+        Requests.status == RequestStatus.PENDING
+    ).first()
+
+    if existing_request:
+        raise HTTPException(
+        status_code=400,
+        detail=f"{existing_request.request_type.value} request already pending"
+    )
+
     req = Requests(
         user_id=user.id,
         book_id=borrow.book_id,
@@ -120,7 +144,6 @@ def request_return(borrow_id: int, db: Session = Depends(get_db), user=Depends(g
     db.refresh(req)
 
     return {"message": "Return Request Created", "request_id": req.id}
-
 
 
 # @router.post("/{request_id}/review")
@@ -352,6 +375,32 @@ def get_all_requests(
             "employee_id": r.user.employee_id,
             "employee_name": r.user.name,
             "book_id": r.book_id,
+            "book_name": r.book.title,
+            "request_type": r.request_type,
+            "status": r.status,
+            "requested_at": r.requested_at,
+            "reviewed_at": r.reviewed_at,
+            "remarks": r.remarks
+        }
+        for r in requests
+    ]
+
+
+
+
+@router.get("/my-requests")
+def get_my_requests(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    requests = db.query(Requests).filter(
+        Requests.user_id == user.id,
+        Requests.status != RequestStatus.PENDING   # ❗ important
+    ).order_by(Requests.requested_at.desc()).all()
+
+    return [
+        {
+            "request_id": r.id,
             "book_name": r.book.title,
             "request_type": r.request_type,
             "status": r.status,

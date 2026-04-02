@@ -1,0 +1,81 @@
+<section class="employee-catalog">
+
+    <header class="employee-catalog__hero">
+        <p class="employee-catalog__eyebrow">My Activity</p>
+        <h2>Request History</h2>
+        <p class="employee-catalog__subtitle">
+            Track all your borrow, return, and renewal requests.
+        </p>
+    </header>
+
+    <!-- Search -->
+    <div class="employee-catalog__search">
+        <input type="text" placeholder="Search by book name..." [(ngModel)]="searchText" (input)="filterHistory()"
+            class="employee-catalog__search-input" />
+    </div>
+
+    <!-- Message -->
+    <div *ngIf="message" class="employee-catalog__state employee-catalog__state--error">
+        {{ message }}
+    </div>
+
+    <!-- Loading -->
+    <div class="employee-catalog__state" *ngIf="loading">
+        Loading history...
+    </div>
+
+    <!-- Empty -->
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && filteredHistory.length === 0">
+        No request history found.
+    </div>
+
+    <!-- Cards -->
+    <div class="employee-catalog__grid" *ngIf="!loading && filteredHistory.length > 0">
+
+        <article *ngFor="let req of filteredHistory" class="catalog-card">
+
+            <!-- Top -->
+            <div class="catalog-card__top">
+                <div>
+                    <p class="catalog-card__category">
+                        {{ req.request_type === 'BORROW' ? 'Borrow' :
+                        req.request_type === 'RENEW' ? 'Renewal' : 'Return' }}
+                    </p>
+
+                    <h3>{{ req.book_name }}</h3>
+                </div>
+
+                <span class="catalog-card__availability" [ngClass]="{
+          'catalog-card__availability--in': req.status === 'APPROVED',
+          'catalog-card__availability--out': req.status === 'REJECTED'
+        }">
+                    {{ req.status }}
+                </span>
+            </div>
+
+            <!-- Meta -->
+            <dl class="catalog-card__meta">
+                <div>
+                    <dt>Requested</dt>
+                    <dd>{{ req.requested_at | date:'mediumDate' }}</dd>
+                </div>
+
+                <div>
+                    <dt>Reviewed</dt>
+                    <dd>
+                        {{ req.reviewed_at
+                        ? (req.reviewed_at | date:'mediumDate')
+                        : 'Pending' }}
+                    </dd>
+                </div>
+            </dl>
+
+            <!-- Remarks -->
+            <div *ngIf="req.remarks" class="catalog-card__remarks">
+                {{ req.remarks }}
+            </div>
+
+        </article>
+    </div>
+</section>

@@ -7,12 +7,14 @@
     </p>
   </header>
 
-  <div *ngIf="message" class="employee-books__message" [ngClass]="{
+  <div *ngIf="message"
+     class="employee-books__message"
+     [ngClass]="{
        'employee-books__message--success': messageType === 'success',
        'employee-books__message--error': messageType === 'error'
      }">
-    {{ message }}
-  </div>
+  {{ message }}
+</div>
 
   <div class="employee-books__state" *ngIf="loading">
     Loading your shelf...
@@ -56,8 +58,7 @@
 
       <div class="book-card__actions" *ngIf="book.status === 'ACTIVE'">
         <button class="book-card__button book-card__button--ghost" (click)="renewBook(book.borrow_id)">Renew</button>
-        <button class="book-card__button book-card__button--primary"
-          (click)="returnBook(book.borrow_id)">Return</button>
+        <button class="book-card__button book-card__button--primary" (click)="returnBook(book.borrow_id)">Return</button>
       </div>
     </article>
   </div>

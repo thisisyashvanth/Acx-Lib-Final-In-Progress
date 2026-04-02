@@ -44,4 +44,8 @@ export class RequestService {
 
     return this.http.get<Request[]>(`${this.baseUrl}/requests`, { params });
   }
+
+  getMyRequests() {
+    return this.http.get<any[]>(`${this.baseUrl}/my-requests`);
+  }
 }

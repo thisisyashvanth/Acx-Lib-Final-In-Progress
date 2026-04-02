@@ -8,7 +8,6 @@ import { RequestService } from '../../../services/request.service';
 })
 export class HrRequestsComponent {
 
-
   message: string = '';
   messageType: 'success' | 'error' | '' = '';
 
@@ -19,7 +18,7 @@ export class HrRequestsComponent {
 
   loading = false;
 
-  constructor(private requestService: RequestService) { }
+  constructor(private requestService: RequestService) {}
 
   ngOnInit() {
     this.loadRequests();
@@ -40,8 +39,11 @@ export class HrRequestsComponent {
 
     this.requestService.getAllRequests().subscribe({
       next: (res) => {
-        // this.requests = res;
-        this.requests = [...res].sort((a: any, b: any) => a.request_id - b.request_id);
+        // ✅ keep your preferred sorting (by ID)
+        this.requests = [...res].sort(
+          (a: any, b: any) => a.request_id - b.request_id
+        );
+
         this.applyFilter();
         this.loading = false;
       },
@@ -76,18 +78,8 @@ export class HrRequestsComponent {
             'success'
           );
 
-          // Update local state
-          this.requests = this.requests.map(req => {
-            if (req.request_id === requestId) {
-              return {
-                ...req,
-                status: approve ? 'APPROVED' : 'REJECTED'
-              };
-            }
-            return req;
-          });
-
-          this.applyFilter();
+          // ✅ IMPORTANT FIX: reload from backend
+          this.loadRequests();
         },
         error: (err) => {
           this.showMessage(
