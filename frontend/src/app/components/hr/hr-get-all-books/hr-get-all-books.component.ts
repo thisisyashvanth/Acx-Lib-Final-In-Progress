@@ -53,7 +53,8 @@ export class HrGetAllBooksComponent {
       book.title.toLowerCase().includes(term) ||
       book.author.toLowerCase().includes(term) ||
       book.isbn.toLowerCase().includes(term) ||
-      book.category?.toLowerCase().includes(term)
+      book.category?.toLowerCase().includes(term) ||
+      book.bookNumber?.toString().toLowerCase().includes(term)
     );
   }
 

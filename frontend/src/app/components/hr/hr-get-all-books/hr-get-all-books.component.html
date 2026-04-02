@@ -38,58 +38,50 @@
         No books matched your search.
     </div>
 
-    <div class="hr-catalog__grid" *ngIf="!loading && filteredBooks.length > 0">
-        <article *ngFor="let book of filteredBooks" class="hr-catalog-card">
-            <div class="hr-catalog-card__top">
-                <div>
-                    <p class="hr-catalog-card__category">{{ book.category || 'General' }}</p>
-                    <h3>{{ book.title }} - {{ book.bookNumber }}</h3>
-                </div>
-                <span class="hr-catalog-card__availability" [ngClass]="{
-                    'hr-catalog-card__availability--in': book.available_copies > 2,
-                    'hr-catalog-card__availability--low': book.available_copies > 0 && book.available_copies <= 2,
-                    'hr-catalog-card__availability--out': book.available_copies === 0
-                }">
-                    {{ book.available_copies > 0 ? (book.available_copies + ' available') : 'Unavailable' }}
-                </span>
-            </div>
-
-            <dl class="hr-catalog-card__meta">
-                <div>
-                    <dt>Author</dt>
-                    <dd>{{ book.author }}</dd>
-                </div>
-                <div>
-                    <dt>ISBN</dt>
-                    <dd>{{ book.isbn }}</dd>
-                </div>
-                <div>
-                    <dt>Total Copies</dt>
-                    <dd>{{ book.total_copies }}</dd>
-                </div>
-                <div>
-                    <dt>Borrowed</dt>
-                    <dd>{{ book.total_copies - book.available_copies }}</dd>
-                </div>
-            </dl>
-
-            <div class="hr-catalog-card__actions">
-                <!-- <button class="hr-catalog-card__button hr-catalog-card__button--primary" (click)="borrowBook(book.id)"
-                    [disabled]="book.available_copies === 0">
-                    Borrow
-                </button>
-                <button class="hr-catalog-card__button" (click)="renewBook(book.borrow_id)"
-                    [disabled]="!book.borrow_id">
-                    Renew
-                </button>
-                <button class="hr-catalog-card__button" (click)="returnBook(book.borrow_id)"
-                    [disabled]="!book.borrow_id">
-                    Return
-                </button> -->
-                <button class="hr-catalog-card__button hr-catalog-card__button--history" (click)="viewHistory(book.id)">
-                    View History
-                </button>
-            </div>
-        </article>
+    <div class="hr-catalog__table-wrap" *ngIf="!loading && filteredBooks.length > 0">
+        <table class="hr-catalog__table">
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Title</th>
+                    <th>Book No.</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>ISBN</th>
+                    <th>Total Copies</th>
+                    <th>Available</th>
+                    <th>Borrowed</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let book of filteredBooks">
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.bookNumber || '-' }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.category || 'General' }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.total_copies }}</td>
+                    <td>{{ book.available_copies }}</td>
+                    <td>{{ book.total_copies - book.available_copies }}</td>
+                    <td>
+                        <span class="hr-catalog__status" [ngClass]="{
+                            'hr-catalog__status--in': book.available_copies > 2,
+                            'hr-catalog__status--low': book.available_copies > 0 && book.available_copies <= 2,
+                            'hr-catalog__status--out': book.available_copies === 0
+                        }">
+                            {{ book.available_copies > 0 ? (book.available_copies + ' available') : 'Unavailable' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="hr-catalog__action-button" (click)="viewHistory(book.id)">
+                            View History
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </section>

@@ -12,6 +12,15 @@ from datetime import datetime, timedelta, timezone
 router = APIRouter(prefix="/request", tags=["Requests"])
 
 
+def get_pending_borrow_action(db: Session, user_id: int, borrow_id: int):
+    return db.query(Requests).filter(
+        Requests.user_id == user_id,
+        Requests.borrow_id == borrow_id,
+        Requests.status == RequestStatus.PENDING,
+        Requests.request_type.in_([RequestType.RENEW, RequestType.RETURN])
+    ).first()
+
+
 @router.post("/borrow/{book_id}")
 def request_borrow(book_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
 
@@ -80,6 +89,13 @@ def request_renew(borrow_id: int, db: Session = Depends(get_db), user=Depends(ge
             detail="Renewal Limit Reached. Please Return The Book."
         )
 
+    pending_request = get_pending_borrow_action(db, user.id, borrow.id)
+    if pending_request:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{pending_request.request_type.value.title()} request already pending for this book."
+        )
+
     req = Requests(
         user_id=user.id,
         book_id=borrow.book_id,
@@ -107,6 +123,13 @@ def request_return(borrow_id: int, db: Session = Depends(get_db), user=Depends(g
 
     if borrow.status != TransactionStatus.ACTIVE:
         raise HTTPException(status_code=400, detail="Already Returned.")
+
+    pending_request = get_pending_borrow_action(db, user.id, borrow.id)
+    if pending_request:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{pending_request.request_type.value.title()} request already pending for this book."
+        )
 
     req = Requests(
         user_id=user.id,

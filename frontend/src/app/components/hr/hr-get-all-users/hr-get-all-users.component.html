@@ -31,45 +31,47 @@
         No users available.
     </div>
 
-    <!-- Users Grid -->
-    <div class="employee-catalog__grid" *ngIf="!loading && users.length > 0">
-        <article *ngFor="let user of filteredUsers" class="catalog-card">
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && users.length > 0 && filteredUsers.length === 0">
+        No users matched your search.
+    </div>
 
-            <!-- Top Section -->
-            <div class="catalog-card__top">
-                <div>
-                    <p class="catalog-card__category">{{ user.role }}</p>
-                    <h3>{{ user.name }}</h3>
-                </div>
-
-                <span class="catalog-card__availability">
-                    {{ user.email }}
-                </span>
-            </div>
-
-            <!-- Meta Info -->
-            <dl class="catalog-card__meta">
-                <div>
-                    <dt>Employee ID</dt>
-                    <dd>{{ user.employee_id }}</dd>
-                </div>
-                <div>
-                    <dt>Is Restricted ?</dt>
-                    <dd>{{ user.is_restricted === true ? 'Yes' : 'No' }}</dd>
-                </div>
-                <!-- <div>
-                    <dt>Role</dt>
-                    <dd>{{ user.role }}</dd>
-                </div> -->
-            </dl>
-
-            <!-- Actions -->
-            <div class="catalog-card__actions">
-                <button class="catalog-card__button catalog-card__button--primary" (click)="viewHistory(user.id)">
-                    View History
-                </button>
-            </div>
-
-        </article>
+    <!-- Users Table -->
+    <div class="employee-catalog__table-wrap" *ngIf="!loading && filteredUsers.length > 0">
+        <table class="employee-catalog__table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Employee ID</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Restricted</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of filteredUsers">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.employee_id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        <span class="employee-catalog__status" [ngClass]="{
+                            'employee-catalog__status--restricted': user.is_restricted === true,
+                            'employee-catalog__status--active': user.is_restricted !== true
+                        }">
+                            {{ user.is_restricted === true ? 'Restricted' : 'Active' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="employee-catalog__action-button" (click)="viewHistory(user.id)">
+                            View History
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </section>

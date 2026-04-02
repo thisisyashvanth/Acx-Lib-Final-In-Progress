@@ -54,17 +54,8 @@ export class HrRequestsComponent {
 
   applyFilter() {
     this.filteredRequests = this.requests.filter(req => {
-      const matchesBook =
-        this.selectedBook === 'ALL' || req.book_name === this.selectedBook;
-
-      const isPending = req.status === 'PENDING';
-
-      return matchesBook && isPending;
+      return this.selectedBook === 'ALL' || req.status === this.selectedBook;
     });
-  }
-
-  get uniqueBooks(): string[] {
-    return [...new Set(this.requests.map(r => r.book_name))];
   }
 
   review(requestId: number, approve: boolean) {

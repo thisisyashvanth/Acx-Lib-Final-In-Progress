@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from core.database import get_db
 from services import user_service
 from models.borrow_model import BorrowRecord
+from models.request_model import RequestStatus, RequestType, Requests
 from security.dependency import get_current_user
 
 
@@ -18,6 +19,20 @@ def get_my_books(
         user_id=current_user.id
     ).all()
 
+    borrow_ids = [record.id for record in records]
+    pending_requests_by_borrow: dict[int, list[str]] = {}
+
+    if borrow_ids:
+        pending_requests = db.query(Requests).filter(
+            Requests.user_id == current_user.id,
+            Requests.borrow_id.in_(borrow_ids),
+            Requests.status == RequestStatus.PENDING,
+            Requests.request_type.in_([RequestType.RENEW, RequestType.RETURN])
+        ).all()
+
+        for request in pending_requests:
+            pending_requests_by_borrow.setdefault(request.borrow_id, []).append(request.request_type.value)
+
     return [
         {
             "borrow_id": r.id,
@@ -27,7 +42,8 @@ def get_my_books(
             "due_date": r.due_date,
             "returned_date": r.returned_date,
             "status": r.status,
-            "renewal_count": r.renewal_count
+            "renewal_count": r.renewal_count,
+            "pending_request_types": pending_requests_by_borrow.get(r.id, [])
         }
         for r in records
     ]

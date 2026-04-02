@@ -29,55 +29,50 @@
 
     <!-- Empty -->
     <div class="employee-catalog__state employee-catalog__state--empty"
-        *ngIf="!loading && filteredRequests.length === 0">
+        *ngIf="!loading && requests.length === 0">
         No request history found.
     </div>
 
-    <!-- Request Grid -->
-    <div class="employee-catalog__grid" *ngIf="!loading && filteredRequests.length > 0">
-        <article *ngFor="let req of filteredRequests" class="catalog-card">
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && requests.length > 0 && filteredRequests.length === 0">
+        No request history matched your search.
+    </div>
 
-            <!-- Top -->
-            <div class="catalog-card__top">
-                <div>
-                    <p class="catalog-card__category">{{ req.request_type }}</p>
-                    <h3>{{ req.book_title }}</h3>
-                </div>
+    <!-- Request Table -->
+    <div class="employee-catalog__table-wrap" *ngIf="!loading && filteredRequests.length > 0">
+        <table class="employee-catalog__table">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Book</th>
+                    <th>Employee</th>
+                    <th>Type</th>
+                    <th>Requested On</th>
+                    <th>Reviewed On</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
 
-                <span class="catalog-card__availability">
-                    {{ req.user_name }}
-                </span>
-            </div>
-
-            <!-- Meta -->
-            <dl class="catalog-card__meta">
-                <!-- <div>
-                    <dt>Request ID</dt>
-                    <dd>{{ req.id }}</dd>
-                </div> -->
-                <div>
-                    <dt>Requested On</dt>
-                    <dd>{{ req.request_date | date:'mediumDate' }}</dd>
-                </div>
-                <div>
-                    <dt>Reviewed On</dt>
-                    <dd>
-                        {{ req.return_date ? (req.return_date | date:'mediumDate') : 'N/A' }}
-                    </dd>
-                </div>
-                <div>
-                    <dt>Status</dt>
-                    <dd>{{ req.status }}</dd>
-                </div>
-            </dl>
-
-            <!-- Actions -->
-            <!-- <div class="catalog-card__actions">
-                <button class="catalog-card__button catalog-card__button--primary" (click)="viewDetails(req)">
-                    View Details
-                </button>
-            </div> -->
-
-        </article>
+            <tbody>
+                <tr *ngFor="let req of filteredRequests">
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.book_title }}</td>
+                    <td>{{ req.user_name }}</td>
+                    <td>{{ req.request_type }}</td>
+                    <td>{{ req.request_date | date:'mediumDate' }}</td>
+                    <td>{{ req.return_date ? (req.return_date | date:'mediumDate') : 'N/A' }}</td>
+                    <td>
+                        <span class="employee-catalog__status" [ngClass]="{
+                            'employee-catalog__status--approved': req.status === 'APPROVED',
+                            'employee-catalog__status--rejected': req.status === 'REJECTED'
+                        }">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                    <td>{{ req.remarks || '-' }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </section>

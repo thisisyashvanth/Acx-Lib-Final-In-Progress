@@ -56,10 +56,12 @@ export class HrViewRequestHistoryComponent {
     const text = this.searchText.toLowerCase();
 
     this.filteredRequests = this.requests.filter(req =>
-      req.book_title.toLowerCase().includes(text) ||
-      req.user_name.toLowerCase().includes(text) ||
-      req.status.toLowerCase().includes(text) ||
-      req.request_type.toLowerCase().includes(text)
+      req.book_title?.toLowerCase().includes(text) ||
+      req.user_name?.toLowerCase().includes(text) ||
+      req.status?.toLowerCase().includes(text) ||
+      req.request_type?.toLowerCase().includes(text) ||
+      req.id?.toString().includes(text) ||
+      req.remarks?.toLowerCase().includes(text)
     );
   }
 }

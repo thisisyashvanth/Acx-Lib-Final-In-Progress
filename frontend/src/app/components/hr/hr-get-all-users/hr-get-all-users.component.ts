@@ -48,7 +48,9 @@ export class HrGetAllUsersComponent {
 
     this.filteredUsers = this.users.filter(user =>
       (user.name?.toLowerCase().includes(term)) ||
-      (user.employee_id?.toString().toLowerCase().includes(term))
+      (user.employee_id?.toString().toLowerCase().includes(term)) ||
+      (user.email?.toLowerCase().includes(term)) ||
+      (user.role?.toLowerCase().includes(term))
     );
   }
 

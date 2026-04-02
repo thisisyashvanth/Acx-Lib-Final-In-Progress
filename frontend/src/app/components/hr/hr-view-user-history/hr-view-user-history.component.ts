@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RequestService } from '../../../services/request.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -38,7 +37,7 @@ export class HrViewUserHistoryComponent {
         this.filteredHistory = res;
         this.loading = false;
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage = 'Failed to load history';
         this.loading = false;
       }
@@ -51,7 +50,8 @@ export class HrViewUserHistoryComponent {
     this.filteredHistory = this.history.filter(item =>
       item.book?.title?.toLowerCase().includes(term) ||
       item.book?.author?.toLowerCase().includes(term) ||
-      item.book?.category?.toLowerCase().includes(term)
+      item.book?.category?.toLowerCase().includes(term) ||
+      item.status?.toLowerCase().includes(term)
     );
   }
 

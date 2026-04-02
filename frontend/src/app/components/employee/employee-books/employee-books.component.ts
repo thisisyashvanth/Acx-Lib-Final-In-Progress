@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RequestService } from '../../../services/request.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-employee-books',
@@ -15,6 +16,7 @@ export class EmployeeBooksComponent {
 
   books: any[] = [];
   loading = false;
+  actionInProgress: Record<number, 'RENEW' | 'RETURN' | undefined> = {};
 
   constructor(
     private requestService: RequestService,
@@ -57,8 +59,79 @@ export class EmployeeBooksComponent {
     });
   }
 
-  renewBook(borrowId: number) {
-    this.requestService.renew(borrowId).subscribe({
+  hasPendingAction(book: any): boolean {
+    return Array.isArray(book.pending_request_types) && book.pending_request_types.length > 0;
+  }
+
+  hasPendingRequestType(book: any, requestType: 'RENEW' | 'RETURN'): boolean {
+    return Array.isArray(book.pending_request_types) && book.pending_request_types.includes(requestType);
+  }
+
+  isActionInProgress(book: any, requestType: 'RENEW' | 'RETURN'): boolean {
+    return this.actionInProgress[book.borrow_id] === requestType;
+  }
+
+  isActionLocked(book: any): boolean {
+    return !!this.actionInProgress[book.borrow_id] || this.hasPendingAction(book);
+  }
+
+  getPendingActionMessage(book: any): string {
+    if (this.hasPendingRequestType(book, 'RETURN')) {
+      return 'Return request already pending with HR.';
+    }
+
+    if (this.hasPendingRequestType(book, 'RENEW')) {
+      return 'Renew request already pending with HR.';
+    }
+
+    return 'A request is already pending with HR.';
+  }
+
+  getRenewButtonLabel(book: any): string {
+    if (this.isActionInProgress(book, 'RENEW')) {
+      return 'Sending...';
+    }
+
+    if (this.hasPendingRequestType(book, 'RENEW')) {
+      return 'Renew Pending';
+    }
+
+    if (this.hasPendingAction(book)) {
+      return 'Renew Locked';
+    }
+
+    return 'Renew';
+  }
+
+  getReturnButtonLabel(book: any): string {
+    if (this.isActionInProgress(book, 'RETURN')) {
+      return 'Sending...';
+    }
+
+    if (this.hasPendingRequestType(book, 'RETURN')) {
+      return 'Return Pending';
+    }
+
+    if (this.hasPendingAction(book)) {
+      return 'Return Locked';
+    }
+
+    return 'Return';
+  }
+
+  renewBook(book: any) {
+    if (this.isActionLocked(book)) {
+      this.showMessage(this.getPendingActionMessage(book), 'error');
+      return;
+    }
+
+    this.actionInProgress[book.borrow_id] = 'RENEW';
+
+    this.requestService.renew(book.borrow_id).pipe(
+      finalize(() => {
+        delete this.actionInProgress[book.borrow_id];
+      })
+    ).subscribe({
       next: () => {
         this.showMessage('Renew request sent', 'success');
         this.loadBooks(); // refresh
@@ -69,8 +142,19 @@ export class EmployeeBooksComponent {
     });
   }
 
-  returnBook(borrowId: number) {
-    this.requestService.returnBook(borrowId).subscribe({
+  returnBook(book: any) {
+    if (this.isActionLocked(book)) {
+      this.showMessage(this.getPendingActionMessage(book), 'error');
+      return;
+    }
+
+    this.actionInProgress[book.borrow_id] = 'RETURN';
+
+    this.requestService.returnBook(book.borrow_id).pipe(
+      finalize(() => {
+        delete this.actionInProgress[book.borrow_id];
+      })
+    ).subscribe({
       next: () => {
         this.showMessage('Return request sent', 'success');
         this.loadBooks(); // refresh
