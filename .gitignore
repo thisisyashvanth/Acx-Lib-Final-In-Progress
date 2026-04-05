@@ -32,6 +32,8 @@ backend/.env
 # AWS SAM
 .aws-sam
 
+backend/samconfig.toml
+
 # =========================
 # Global
 # =========================
