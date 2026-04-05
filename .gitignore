@@ -1,3 +1,48 @@
-venv
-.env
-__pycache__
+# =========================
+# Angular / Frontend
+# =========================
+
+# Build output
+frontend/dist/
+
+# Node modules
+frontend/node_modules/
+
+# Angular cache
+frontend/.angular
+
+# Environment files
+frontend/src/environments/environment.prod.ts
+
+# Visual Studio Code
+frontend/.vscode
+
+# =========================
+# FastAPI / Backend
+# =========================
+
+# Python cache
+backend/__pycache__/
+backend/*.py[cod]
+
+# Virtual environment
+backend/venv/
+backend/.env
+
+# AWS SAM
+.aws-sam
+
+# =========================
+# Global
+# =========================
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Misc
+*.log
