@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
 
 
 class CreateBookResp(BaseModel):
@@ -46,3 +48,28 @@ class DeleteBookResp(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+
+class GetBookUserHistoryResp(BaseModel):
+    borrow_id: int
+    user_id: int
+    employee_id: str
+    employee_name: str
+    issue_date: datetime
+    due_date: datetime
+    returned_date: Optional[datetime]
+    status: str
+    renewal_count: int
+    
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class GetBasicBook(BaseModel):
+    id: int
+    title: str
+    author: str
+    category: str | None
+
+    model_config = {"from_attributes": True}

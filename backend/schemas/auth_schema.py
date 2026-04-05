@@ -1,22 +1,7 @@
 from pydantic import BaseModel, EmailStr, field_validator
-from schemas.user_schema import GetUserResp
 from models.user_model import RoleEnum
 from datetime import datetime
-
-
-class UserLoginResp(BaseModel):
-    access_token: str
-    token_type: str
-    user: GetUserResp
-
-    model_config = {
-        "from_attributes": True
-    }
-
-
-class UserLoginReq(BaseModel):
-    email: EmailStr
-    password: str
+from schemas.user_schema import GetUserResp
 
 
 class UserSignupResp(BaseModel):
@@ -49,3 +34,18 @@ class UserSignupReq(BaseModel):
             raise ValueError("Only acxhange.com Emails Are Allowed.")
 
         return email
+
+
+class UserLoginResp(BaseModel):
+    access_token: str
+    token_type: str
+    user: GetUserResp
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class UserLoginReq(BaseModel):
+    email: EmailStr
+    password: str
