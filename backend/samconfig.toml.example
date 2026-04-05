@@ -1,0 +1,13 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "placeholder"
+s3_bucket = "placeholder"
+s3_prefix = "placeholder"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "placeholder"
+image_repositories = []
+
+[default.global.parameters]
+region = "placeholder"
