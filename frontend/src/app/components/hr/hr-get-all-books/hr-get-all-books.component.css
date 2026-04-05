@@ -1,3 +1,109 @@
 :host {
     display: block;
 }
+
+.hr-catalog__table-wrap {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(14, 24, 32, 0.92), rgba(7, 15, 25, 0.97));
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.2);
+}
+
+.hr-catalog__table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+    color: #edf3f8;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.hr-catalog__table th,
+.hr-catalog__table td {
+    padding: 1rem 1.1rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.hr-catalog__table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: rgba(255, 207, 154, 0.08);
+    color: #ffe0ba;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hr-catalog__table tbody tr {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background-color 0.2s ease;
+}
+
+.hr-catalog__table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.hr-catalog__table td {
+    color: #d8e3ec;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.hr-catalog__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 7rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.hr-catalog__status--in {
+    border-color: rgba(111, 214, 170, 0.3);
+    background: rgba(111, 214, 170, 0.16);
+    color: #bff2d8;
+}
+
+.hr-catalog__status--low {
+    border-color: rgba(255, 207, 154, 0.32);
+    background: rgba(255, 207, 154, 0.14);
+    color: #ffe7c8;
+}
+
+.hr-catalog__status--out {
+    border-color: rgba(255, 140, 140, 0.3);
+    background: rgba(255, 140, 140, 0.14);
+    color: #ffd0d0;
+}
+
+.hr-catalog__action-button {
+    padding: 0.72rem 1rem;
+    border: 1px solid rgba(255, 207, 154, 0.3);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(187, 117, 34, 0.92), rgba(25, 18, 11, 0.96));
+    color: #fff2df;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hr-catalog__action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 640px) {
+    .hr-catalog__table-wrap {
+        border-radius: 18px;
+    }
+}

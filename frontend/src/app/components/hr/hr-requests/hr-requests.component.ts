@@ -14,11 +14,10 @@ export class HrRequestsComponent {
   requests: any[] = [];
   filteredRequests: any[] = [];
 
-  selectedBook: string = 'ALL';
-
+  selectedType: string = 'ALL';
   loading = false;
 
-  constructor(private requestService: RequestService) {}
+  constructor(private requestService: RequestService) { }
 
   ngOnInit() {
     this.loadRequests();
@@ -56,17 +55,13 @@ export class HrRequestsComponent {
 
   applyFilter() {
     this.filteredRequests = this.requests.filter(req => {
-      const matchesBook =
-        this.selectedBook === 'ALL' || req.book_name === this.selectedBook;
+      const matchesType =
+        this.selectedType === 'ALL' || req.request_type === this.selectedType;
 
       const isPending = req.status === 'PENDING';
 
-      return matchesBook && isPending;
+      return matchesType && isPending;
     });
-  }
-
-  get uniqueBooks(): string[] {
-    return [...new Set(this.requests.map(r => r.book_name))];
   }
 
   review(requestId: number, approve: boolean) {

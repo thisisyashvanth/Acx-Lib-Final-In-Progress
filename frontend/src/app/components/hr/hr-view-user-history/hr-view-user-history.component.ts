@@ -51,7 +51,8 @@ export class HrViewUserHistoryComponent {
     this.filteredHistory = this.history.filter(item =>
       item.book?.title?.toLowerCase().includes(term) ||
       item.book?.author?.toLowerCase().includes(term) ||
-      item.book?.category?.toLowerCase().includes(term)
+      item.book?.category?.toLowerCase().includes(term) ||
+      item.status?.toLowerCase().includes(term)
     );
   }
 

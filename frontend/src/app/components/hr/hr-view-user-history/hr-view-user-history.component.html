@@ -8,9 +8,14 @@
         </p>
     </header>
 
-    <div class="employee-catalog__search">
-        <input type="text" placeholder="Search by book name..." [(ngModel)]="searchText" (input)="filterHistory()"
-            class="employee-catalog__search-input" />
+    <label class="employee-catalog__search">
+        <input type="text" placeholder="Search by title, author, category, or status..." [(ngModel)]="searchText"
+            (input)="filterHistory()" class="employee-catalog__search-input" />
+    </label>
+
+    <div class="employee-catalog__state employee-catalog__state--empty"
+        *ngIf="!loading && history.length > 0 && filteredHistory.length === 0">
+        No history matched your search.
     </div>
 
     <!-- Loading -->
@@ -28,49 +33,40 @@
         No history found.
     </div>
 
-    <!-- History Cards -->
-    <div class="employee-catalog__grid" *ngIf="!loading && history.length > 0">
+    <div class="employee-catalog__table-wrap" *ngIf="!loading && filteredHistory.length > 0">
+        <table class="employee-catalog__table">
+            <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Borrow Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
 
-        <article *ngFor="let item of filteredHistory" class="catalog-card">
-
-            <!-- Top -->
-            <div class="catalog-card__top">
-                <div>
-                    <p class="catalog-card__category">{{ item.book.category }}</p>
-                    <h3>{{ item.book.title }}</h3>
-                </div>
-
-                <span class="catalog-card__availability" [ngClass]="{
-                        'catalog-card__availability--in': item.status === 'RETURNED',
-                        'catalog-card__availability--low': item.status === 'BORROWED',
-                        'catalog-card__availability--out': item.status === 'OVERDUE'
-                      }">
-                    {{ item.status }}
-                </span>
-            </div>
-
-            <!-- Meta -->
-            <dl class="catalog-card__meta">
-                <div>
-                    <dt>Author</dt>
-                    <dd>{{ item.book.author }}</dd>
-                </div>
-                <div>
-                    <dt>Borrow Date</dt>
-                    <dd>{{ item.borrow_date | date }}</dd>
-                </div>
-                <div>
-                    <dt>Return Date</dt>
-                    <dd>{{ item.return_date ? (item.return_date | date) : 'Not returned' }}</dd>
-                </div>
-                <div>
-                    <dt>Due Date</dt>
-                    <dd>{{ item.due_date | date }}</dd>
-                </div>
-            </dl>
-
-        </article>
-
+            <tbody>
+                <tr *ngFor="let item of filteredHistory">
+                    <td>{{ item.book?.title || '-' }}</td>
+                    <td>{{ item.book?.author || '-' }}</td>
+                    <td>{{ item.book?.category || '-' }}</td>
+                    <td>{{ item.borrow_date | date:'mediumDate' }}</td>
+                    <td>{{ item.due_date | date:'mediumDate' }}</td>
+                    <td>{{ item.return_date ? (item.return_date | date:'mediumDate') : 'Not returned' }}</td>
+                    <td>
+                        <span class="employee-catalog__status" [ngClass]="{
+                            'employee-catalog__status--returned': item.status === 'RETURNED',
+                            'employee-catalog__status--borrowed': item.status === 'BORROWED',
+                            'employee-catalog__status--overdue': item.status === 'OVERDUE'
+                        }">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </section>

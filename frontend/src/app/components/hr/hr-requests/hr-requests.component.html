@@ -8,13 +8,13 @@
     </header>
 
     <div class="hr-requests__filter">
-        <label>Filter by Book:</label>
+        <label  class="hr-requests__filter-label">Filter by Request Type:</label>
 
-        <select [(ngModel)]="selectedBook" (change)="applyFilter()">
-            <option value="ALL">All Books</option>
-            <option *ngFor="let book of uniqueBooks" [value]="book">
-                {{ book }}
-            </option>
+        <select class="hr-requests__filter-select" [(ngModel)]="selectedType" (change)="applyFilter()">
+            <option value="ALL">All</option>
+            <option value="BORROW">Borrow</option>
+            <option value="RETURN">Return</option>
+            <option value="RENEW">Renew</option>
         </select>
     </div>
 
