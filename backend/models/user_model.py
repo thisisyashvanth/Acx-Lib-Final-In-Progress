@@ -1,6 +1,7 @@
 import enum
 from core.database import Base
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, func, Enum
+from sqlalchemy import Column, Integer, String, Enum, Boolean, DateTime, func 
+
 
 class RoleEnum(str, enum.Enum):
     HR = "HR"
