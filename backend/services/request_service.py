@@ -1,195 +1,367 @@
 from datetime import datetime, timedelta, timezone
-
 from sqlalchemy.orm import Session
 
-from models.borrow_model import BorrowRecord
+from models.borrow_model import BorrowRecord, TransactionStatus
 from models.book_model import Book
 from models.request_model import RequestStatus, RequestType, Requests
+from models.user_model import User
 
 
-# 🔹 CONFIG (you can move this to settings later)
-DEFAULT_BORROW_DAYS = 14
-MAX_RENEWALS = 2
+# ================================
+# 🔹 CONFIG
+# ================================
+MAX_RENEWALS = 1
+RESTRICTION_DAYS = 30
 
 
-def create_request(request, db: Session, user):
+# ================================
+# 🔹 POLICY UTILS
+# ================================
+def _get_fourth_tuesday(from_date: datetime) -> datetime:
+    """Returns the 4th Tuesday on or after from_date."""
+    # Normalize to date portion
+    d = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    days_until_tuesday = (1 - d.weekday()) % 7  # 1 = Tuesday
+    first_tuesday = d + timedelta(days=days_until_tuesday)
+    fourth_tuesday = first_tuesday + timedelta(weeks=3)
+    return fourth_tuesday
 
-    # ❗ Check for existing pending request
+
+# ACTUAL LOGIC
+# def _is_tuesday_second_half() -> bool:
+#     """Returns True if it's Tuesday between 12:00 PM and 6:00 PM UTC."""
+#     now = datetime.now(timezone.utc)
+#     return now.weekday() == 1 and 12 <= now.hour < 18
+
+
+# TESTING
+def _is_tuesday_second_half() -> bool:
+    return True 
+
+
+# ================================
+# ✅ CREATE REQUESTS
+# ================================
+def create_borrow_request(book_id: int, db: Session, user):
+
+    if not _is_tuesday_second_half():
+        raise Exception("Borrow requests can only be made on Tuesdays between 12:00 PM and 6:00 PM")
+
+    if user.is_restricted:
+        raise Exception("You are restricted from borrowing books")
+
+    existing_borrow = db.query(BorrowRecord).filter_by(
+        user_id=user.id,
+        status=TransactionStatus.ACTIVE
+    ).first()
+
+    if existing_borrow:
+        raise Exception("You already have an active borrowed book")
+
+    existing_request = db.query(Requests).filter_by(
+        user_id=user.id,
+        book_id=book_id,
+        request_type=RequestType.BORROW,
+        status=RequestStatus.PENDING
+    ).first()
+
+    if existing_request:
+        raise Exception("Borrow request already pending for this book")
+
+    book = db.query(Book).filter_by(id=book_id).first()
+    if not book:
+        raise Exception("Book not found")
+
+    req = Requests(
+        user_id=user.id,
+        book_id=book_id,
+        request_type=RequestType.BORROW
+    )
+
+    db.add(req)
+    db.commit()
+    db.refresh(req)
+
+    return {"message": "Borrow request created", "request_id": req.id}
+
+
+def create_renew_request(borrow_id: int, db: Session, user):
+
+    # 🔹 Policy: renewals only on Tuesdays after 12 PM
+    if not _is_tuesday_second_half():
+        raise Exception("Renewals can only be requested on Tuesdays after 12:00 PM")
+
+    borrow = db.query(BorrowRecord).filter_by(
+        id=borrow_id,
+        user_id=user.id
+    ).first()
+
+    if not borrow:
+        raise Exception("Borrow record not found")
+
+    if borrow.status != TransactionStatus.ACTIVE:
+        raise Exception("Cannot renew this book")
+
+    if borrow.renewal_count >= MAX_RENEWALS:
+        raise Exception("Renewal limit reached. Please return the book.")
+
     existing_request = db.query(Requests).filter(
         Requests.user_id == user.id,
-        Requests.book_id == request.book_id,
+        Requests.borrow_id == borrow_id,
         Requests.status == RequestStatus.PENDING
     ).first()
 
     if existing_request:
-        raise Exception("You already have a pending request for this book")
+        raise Exception(f"{existing_request.request_type.value} request already pending")
 
-    # ❗ Additional smart checks based on request type
-
-    # Check active borrow
-    active_borrow = db.query(BorrowRecord).filter(
-        BorrowRecord.user_id == user.id,
-        BorrowRecord.book_id == request.book_id,
-        BorrowRecord.returned_date.is_(None)
-    ).first()
-
-    # 🚫 If BORROW → user should NOT already have the book
-    if request.request_type == RequestType.BORROW and active_borrow:
-        raise Exception("You have already borrowed this book")
-
-    # 🚫 If RETURN / RENEW → user MUST have active borrow
-    if request.request_type in [RequestType.RETURN, RequestType.RENEW] and not active_borrow:
-        raise Exception("No active borrow found for this book")
-
-    # 🚫 Prevent multiple renew requests
-    if request.request_type == RequestType.RENEW:
-        if active_borrow.renewal_count >= MAX_RENEWALS:
-            raise Exception("Max renewals already reached")
-
-    # ✅ Create request
-    new_request = Requests(
+    req = Requests(
         user_id=user.id,
-        book_id=request.book_id,
-        request_type=request.request_type,
-        status=RequestStatus.PENDING
+        book_id=borrow.book_id,
+        borrow_id=borrow.id,
+        request_type=RequestType.RENEW
     )
 
-    db.add(new_request)
+    db.add(req)
     db.commit()
-    db.refresh(new_request)
+    db.refresh(req)
+
+    return {"message": "Renew request created", "request_id": req.id}
+
+
+def create_return_request(borrow_id: int, db: Session, user):
+
+    # 🔹 Policy: returns only on Tuesdays after 12 PM
+    if not _is_tuesday_second_half():
+        raise Exception("Returns can only be requested on Tuesdays after 12:00 PM")
+
+    borrow = db.query(BorrowRecord).filter_by(
+        id=borrow_id,
+        user_id=user.id
+    ).first()
+
+    if not borrow:
+        raise Exception("Borrow record not found")
+
+    if borrow.status != TransactionStatus.ACTIVE:
+        raise Exception("Already returned")
+
+    existing_request = db.query(Requests).filter(
+        Requests.user_id == user.id,
+        Requests.borrow_id == borrow_id,
+        Requests.status == RequestStatus.PENDING
+    ).first()
+
+    if existing_request:
+        raise Exception(f"{existing_request.request_type.value} request already pending")
+
+    req = Requests(
+        user_id=user.id,
+        book_id=borrow.book_id,
+        borrow_id=borrow.id,
+        request_type=RequestType.RETURN
+    )
+
+    db.add(req)
+    db.commit()
+    db.refresh(req)
+
+    return {"message": "Return request created", "request_id": req.id}
+
+
+# ================================
+# ✅ OVERDUE + RESTRICTION (HR triggers)
+# ================================
+def check_and_flag_overdue(db: Session):
+    """
+    Marks overdue borrows and restricts employees who failed to
+    renew or return by their due date.
+    HR calls this endpoint every Tuesday.
+    """
+    now = datetime.now(timezone.utc)
+
+    overdue_records = db.query(BorrowRecord).filter(
+        BorrowRecord.status == TransactionStatus.ACTIVE,
+        BorrowRecord.due_date < now
+    ).all()
+
+    restricted_users = []
+
+    for record in overdue_records:
+        record.status = TransactionStatus.OVERDUE
+
+        user = db.query(User).filter_by(id=record.user_id).first()
+        if user and not user.is_restricted:
+            user.is_restricted = True
+            user.restricted_until = now + timedelta(days=RESTRICTION_DAYS)
+            restricted_users.append(user.name)
+
+    db.commit()
 
     return {
-        "id": new_request.id,
-        "message": "Request created successfully"
+        "overdue_count": len(overdue_records),
+        "restricted_users": restricted_users
     }
 
 
-# ✅ Review Request (HR)
-def review_request(request_id: int, review, db: Session, hr_user):
-    req = db.query(Requests).filter(Requests.id == request_id).first()
+def lift_expired_restrictions(db: Session):
+    """
+    Lifts restrictions for users whose restriction period has ended.
+    HR calls this endpoint or it runs automatically on login.
+    """
+    now = datetime.now(timezone.utc)
+
+    expired = db.query(User).filter(
+        User.is_restricted == True,
+        User.restricted_until <= now
+    ).all()
+
+    for user in expired:
+        user.is_restricted = False
+        user.restricted_until = None
+
+    db.commit()
+
+    return {"lifted_count": len(expired)}
+
+
+# ================================
+# ✅ REVIEW REQUEST (HR)
+# ================================
+def review_request(request_id: int, approve: bool, db: Session, hr_user):
+
+    if not _is_tuesday_second_half():
+        raise Exception("Requests can only be reviewed on Tuesdays between 12:00 PM and 6:00 PM")
+
+    req = db.query(Requests).filter_by(id=request_id).first()
 
     if not req:
         raise Exception("Request not found")
 
     if req.status != RequestStatus.PENDING:
-        raise Exception("Already processed")
+        raise Exception("Already reviewed")
 
-    req.status = review.status
+    now = datetime.now(timezone.utc)
+
+    if not approve:
+        req.status = RequestStatus.REJECTED
+        req.reviewed_by = hr_user.id
+        req.reviewed_at = now
+        db.commit()
+        return {"message": "Request rejected"}
+
+    if req.request_type == RequestType.BORROW:
+        _approve_borrow(req, db, hr_user, now)
+
+    elif req.request_type == RequestType.RENEW:
+        _approve_renew(req, db)
+
+    elif req.request_type == RequestType.RETURN:
+        _approve_return(req, db)
+
+    req.status = RequestStatus.APPROVED
     req.reviewed_by = hr_user.id
-    req.reviewed_at = datetime.now(timezone.utc)
-    req.remarks = review.remarks
-
-    if review.status == RequestStatus.APPROVED:
-
-        if req.request_type == RequestType.BORROW:
-            _handle_borrow(req, db)
-
-        elif req.request_type == RequestType.RETURN:
-            _handle_return(req, db)
-
-        elif req.request_type == RequestType.RENEW:
-            _handle_renew(req, db)
+    req.reviewed_at = now
 
     db.commit()
-    db.refresh(req)
 
-    return {
-        "id": req.id,
-        "status": req.status,
-        "message": f"Request {req.status.lower()}"
-    }
+    return {"message": "Request approved"}
 
 
-# 🔁 BORROW
-def _handle_borrow(req, db: Session):
-    book = db.query(Book).filter(Book.id == req.book_id).first()
+# ================================
+# 🔹 APPROVAL HELPERS
+# ================================
+def _approve_borrow(req, db: Session, hr_user, now: datetime):
+
+    book = db.query(Book).filter_by(id=req.book_id).with_for_update().first()
 
     if not book:
         raise Exception("Book not found")
 
     if book.available_copies <= 0:
-        raise Exception("No copies available")
+        req.status = RequestStatus.REJECTED
+        req.reviewed_by = hr_user.id
+        req.reviewed_at = now
+        req.remarks = "Auto-rejected: No copies available"
+        db.commit()
+        raise Exception("No copies available. Request auto-rejected.")
 
-    # Prevent duplicate active borrow
-    existing = db.query(BorrowRecord).filter(
-        BorrowRecord.user_id == req.user_id,
-        BorrowRecord.book_id == req.book_id,
-        BorrowRecord.returned_date.is_(None)
-    ).first()
+    # 🔹 Policy: due date = 4th Tuesday from issue date
+    due_date = _get_fourth_tuesday(now)
 
-    if existing:
-        raise Exception("Book already borrowed")
-
-    record = BorrowRecord(
+    borrow = BorrowRecord(
         user_id=req.user_id,
         book_id=req.book_id,
-        issue_date=datetime.now(timezone.utc),
-        due_date=datetime.now(timezone.utc) + timedelta(days=DEFAULT_BORROW_DAYS),
-        status="borrowed"
+        issue_date=now,
+        due_date=due_date,
+        renewal_count=0
     )
-
+    db.add(borrow)
     book.available_copies -= 1
 
-    db.add(record)
+    # Auto-reject all other pending borrow requests for the same user
+    db.query(Requests).filter(
+        Requests.user_id == req.user_id,
+        Requests.id != req.id,
+        Requests.request_type == RequestType.BORROW,
+        Requests.status == RequestStatus.PENDING
+    ).update(
+        {
+            Requests.status: RequestStatus.REJECTED,
+            Requests.reviewed_by: hr_user.id,
+            Requests.reviewed_at: now,
+            Requests.remarks: "Auto-rejected: Another borrow request was approved"
+        },
+        synchronize_session=False
+    )
 
 
-# 🔁 RETURN
-def _handle_return(req, db: Session):
-    record = db.query(BorrowRecord).filter(
-        BorrowRecord.user_id == req.user_id,
-        BorrowRecord.book_id == req.book_id,
-        BorrowRecord.returned_date.is_(None)
-    ).first()
+def _approve_renew(req, db: Session):
 
-    if not record:
-        raise Exception("No active borrow found")
+    borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
 
-    record.returned_date = datetime.now(timezone.utc)
-    record.status = "returned"
+    if not borrow:
+        raise Exception("Borrow record not found")
 
-    book = db.query(Book).filter(Book.id == req.book_id).first()
-    book.available_copies += 1
+    if borrow.renewal_count >= MAX_RENEWALS:
+        raise Exception("Renewal limit reached")
+
+    # 🔹 Policy: new due date = 4th Tuesday from current due date
+    borrow.due_date = _get_fourth_tuesday(borrow.due_date)
+    borrow.renewal_count += 1
 
 
-# 🔁 RENEW
-def _handle_renew(req, db: Session):
-    record = db.query(BorrowRecord).filter(
-        BorrowRecord.user_id == req.user_id,
-        BorrowRecord.book_id == req.book_id,
-        BorrowRecord.returned_date.is_(None)
-    ).first()
+def _approve_return(req, db: Session):
 
-    if not record:
-        raise Exception("No active borrow found")
+    borrow = db.query(BorrowRecord).filter_by(id=req.borrow_id).first()
 
-    if record.renewal_count >= MAX_RENEWALS:
-        raise Exception("Max renewals reached")
+    if not borrow:
+        raise Exception("Borrow record not found")
 
-    record.due_date += timedelta(days=DEFAULT_BORROW_DAYS)
-    record.renewal_count += 1
+    borrow.status = TransactionStatus.RETURNED
+    borrow.returned_date = datetime.now(timezone.utc)
+
+    book = db.query(Book).filter_by(id=borrow.book_id).first()
+    if book:
+        book.available_copies += 1
 
 
-# ✅ Get all requests (HR)
-def get_all_requests(db: Session):
-    return db.query(Requests).order_by(
-        Requests.requested_at.desc()
-    ).all()
+# ================================
+# ✅ GETTERS
+# ================================
+def get_all_requests(db: Session, status=None, request_type=None):
+    query = db.query(Requests)
+
+    if status:
+        query = query.filter(Requests.status == status)
+
+    if request_type:
+        query = query.filter(Requests.request_type == request_type)
+
+    return query.order_by(Requests.requested_at.desc()).all()
 
 
-# ✅ Get single request
-def get_request(request_id: int, db: Session):
-    req = db.query(Requests).filter(
-        Requests.id == request_id
-    ).first()
-
-    if not req:
-        raise Exception("Request not found")
-    
-    return req
-
-
-# # ✅ Get user requests
-# def get_user_requests(user_id: int, db: Session):
-#     return db.query(Requests).filter(
-#         Requests.user_id == user_id
-#     ).order_by(Requests.requested_at.desc()).all()
+def get_my_requests(db: Session, user):
+    return db.query(Requests).filter(
+        Requests.user_id == user.id,
+        Requests.status != RequestStatus.PENDING
+    ).order_by(Requests.requested_at.desc()).all()
