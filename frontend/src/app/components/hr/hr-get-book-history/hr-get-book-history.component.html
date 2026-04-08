@@ -30,6 +30,12 @@
     No history entries matched your search.
   </div>
 
+  <div style="margin-bottom: 10px;">
+    <button (click)="downloadExcel()" class="hr-history__action-button">
+      Download Excel
+    </button>
+  </div>
+
   <div class="hr-history__table-wrap" *ngIf="!loading && filteredHistory.length > 0">
     <table class="hr-history__table">
       <thead>

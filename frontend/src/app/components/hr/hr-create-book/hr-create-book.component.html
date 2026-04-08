@@ -7,6 +7,14 @@
     </p>
   </header>
 
+  <div class="hr-create-book__message hr-create-book__message--success" *ngIf="message">
+    {{ message }}
+  </div>
+
+  <div class="hr-create-book__message hr-create-book__message--error" *ngIf="error">
+    {{ error }}
+  </div>
+
   <div class="hr-create-book__layout">
     <form class="hr-create-book__form" (ngSubmit)="onSubmit()" #bookForm="ngForm">
       <div class="hr-create-book__grid">
@@ -59,13 +67,5 @@
         <li>Use a clear category to help employees browse faster.</li>
       </ul>
     </aside>
-  </div>
-
-  <div class="hr-create-book__message hr-create-book__message--success" *ngIf="message">
-    {{ message }}
-  </div>
-
-  <div class="hr-create-book__message hr-create-book__message--error" *ngIf="error">
-    {{ error }}
   </div>
 </section>

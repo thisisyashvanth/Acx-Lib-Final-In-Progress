@@ -38,9 +38,11 @@ export class HrCreateBookComponent {
       next: (res: any) => {
         this.message = 'Book created successfully!';
         this.resetForm();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       },
       error: (err) => {
         this.error = err.error?.detail || 'Failed to create book';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
   }

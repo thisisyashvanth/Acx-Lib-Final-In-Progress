@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RequestService } from '../../../services/request.service';
 import { BookService } from '../../../services/book.service';
+import { ExcelService } from '../../../services/excel.service';
 
 @Component({
   selector: 'app-hr-get-book-history',
@@ -20,7 +20,8 @@ export class HrGetBookHistoryComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private bookService: BookService
+    private bookService: BookService,
+    private excelService: ExcelService
   ) { }
 
   ngOnInit(): void {
@@ -50,5 +51,24 @@ export class HrGetBookHistoryComponent {
       record.employee_id.toLowerCase().includes(term) ||
       record.status.toLowerCase().includes(term)
     );
+  }
+
+  downloadExcel() {
+    this.excelService.exportBookHistory(this.filteredHistory).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        a.href = url;
+        a.download = `book_history_${this.bookId}_${new Date().toISOString()}.xlsx`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.error = 'Failed to download Excel';
+        console.error(err);
+      }
+    });
   }
 }

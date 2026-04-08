@@ -5,6 +5,7 @@ from security.dependency import get_current_user, require_hr
 from models.request_model import RequestStatus, RequestType
 from services.request_service import create_borrow_request, create_renew_request, create_return_request, review_request, check_and_flag_overdue, lift_expired_restrictions, get_all_requests, get_my_requests
 from schemas.request_schema import ReviewRequestBody
+from services import request_service
 
 
 router = APIRouter(prefix="/request", tags=["Requests"])
@@ -62,7 +63,7 @@ def lift_restrictions(db: Session = Depends(get_db), hr=Depends(require_hr)):
 @router.get("/requests")
 def get_all_requests(status: RequestStatus | None = Query(default=None), request_type: RequestType | None = Query(default=None), db: Session = Depends(get_db), hr=Depends(require_hr)):
 
-    requests = get_all_requests(db, status, request_type)
+    requests = request_service.get_all_requests(db, status, request_type)
 
     return [
         {

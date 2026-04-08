@@ -15,7 +15,7 @@ def _get_fourth_tuesday(from_date: datetime) -> datetime:
     d = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
     days_until_tuesday = (1 - d.weekday()) % 7
     first_tuesday = d + timedelta(days=days_until_tuesday)
-    fourth_tuesday = first_tuesday + timedelta(weeks=3)
+    fourth_tuesday = first_tuesday + timedelta(weeks=4)
     return fourth_tuesday
 
 

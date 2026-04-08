@@ -38,6 +38,12 @@
         No books matched your search.
     </div>
 
+    <div style="margin-bottom: 10px;">
+        <button (click)="downloadExcel()" class="hr-catalog__action-button">
+            Download Excel
+        </button>
+    </div>
+
     <div class="hr-catalog__table-wrap" *ngIf="!loading && filteredBooks.length > 0">
         <table class="hr-catalog__table">
             <thead>

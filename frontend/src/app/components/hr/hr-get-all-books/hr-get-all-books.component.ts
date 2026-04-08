@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { BookService } from '../../../services/book.service';
 import { Router } from '@angular/router';
 import { RequestService } from '../../../services/request.service';
+import { ExcelService } from '../../../services/excel.service';
 
 @Component({
   selector: 'app-hr-get-all-books',
@@ -20,7 +21,12 @@ export class HrGetAllBooksComponent {
   filteredBooks: any[] = [];
   searchText: string = '';
 
-  constructor(private bookService: BookService, private router: Router, private requestService: RequestService) { }
+  constructor(
+    private bookService: BookService,
+    private router: Router,
+    private requestService: RequestService,
+    private excelService: ExcelService
+  ) { }
 
   ngOnInit(): void {
     this.getAllBooks();
@@ -99,6 +105,25 @@ export class HrGetAllBooksComponent {
 
   viewHistory(bookId: number) {
     this.router.navigate([`/books/${bookId}/history`]);
+  }
+
+  downloadExcel() {
+    this.excelService.exportBooks(this.filteredBooks).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        a.href = url;
+        a.download = `available_books_${new Date().toISOString()}.xlsx`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to download Excel';
+        console.error(err);
+      }
+    });
   }
 
 }

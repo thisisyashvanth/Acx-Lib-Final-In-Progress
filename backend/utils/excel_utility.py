@@ -63,3 +63,87 @@ def generate_requests_excel(requests: list):
     wb.save(stream)
     stream.seek(0)
     return stream
+
+
+def generate_books_excel(books: list):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Available Books"
+
+    headers = [
+        "Book ID",
+        "Title",
+        "Book Number",
+        "Author",
+        "Category",
+        "ISBN",
+        "Total Copies",
+        "Available Copies",
+        "Borrowed Copies",
+        "Status"
+    ]
+    ws.append(headers)
+
+    for book in books:
+        total_copies = book.get("total_copies") or 0
+        available_copies = book.get("available_copies") or 0
+
+        if available_copies == 0:
+            status = "Unavailable"
+        else:
+            status = f"{available_copies} available"
+
+        ws.append([
+            book.get("id"),
+            book.get("title"),
+            book.get("bookNumber"),
+            book.get("author"),
+            book.get("category"),
+            book.get("isbn"),
+            total_copies,
+            available_copies,
+            total_copies - available_copies,
+            status
+        ])
+
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+    return stream
+
+
+def generate_book_history_excel(history: list):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Book History"
+
+    headers = [
+        "Borrow ID",
+        "User ID",
+        "Employee",
+        "Employee ID",
+        "Issue Date",
+        "Due Date",
+        "Returned Date",
+        "Status",
+        "Renewals"
+    ]
+    ws.append(headers)
+
+    for record in history:
+        ws.append([
+            record.get("borrow_id"),
+            record.get("user_id"),
+            record.get("employee_name"),
+            record.get("employee_id"),
+            record.get("issue_date"),
+            record.get("due_date"),
+            record.get("returned_date") or "-",
+            record.get("status"),
+            record.get("renewal_count")
+        ])
+
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+    return stream

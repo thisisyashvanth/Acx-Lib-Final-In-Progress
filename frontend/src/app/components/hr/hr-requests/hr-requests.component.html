@@ -75,8 +75,12 @@
                 </button>
             </div>
 
-            <div *ngIf="req.status === 'PENDING'" style="margin-top: 10px;">
-                <input type="text" placeholder="Add Remark ..." [(ngModel)]="req.remarkInput"
+            <div *ngIf="req.status === 'PENDING'" class="request-card__remark">
+                <label class="request-card__remark-label" [for]="'remark-' + req.request_id">
+                    Remarks
+                </label>
+                <input [id]="'remark-' + req.request_id" type="text"
+                    placeholder="Add a note for rejection" [(ngModel)]="req.remarkInput"
                     class="request-card__input" />
             </div>
         </article>

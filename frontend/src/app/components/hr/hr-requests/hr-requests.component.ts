@@ -38,7 +38,6 @@ export class HrRequestsComponent {
 
     this.requestService.getRequests().subscribe({
       next: (res) => {
-        // ✅ keep your preferred sorting (by ID)
         this.requests = [...res].sort(
           (a: any, b: any) => a.request_id - b.request_id
         );

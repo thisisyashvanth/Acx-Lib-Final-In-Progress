@@ -23,4 +23,16 @@ export class ExcelService {
       responseType: 'blob'
     });
   }
+
+  exportBooks(data: any[]): Observable<Blob> {
+    return this.http.post(`${this.baseUrl}/hr/export-books`, data, {
+      responseType: 'blob'
+    });
+  }
+
+  exportBookHistory(data: any[]): Observable<Blob> {
+    return this.http.post(`${this.baseUrl}/hr/export-book-history`, data, {
+      responseType: 'blob'
+    });
+  }
 }

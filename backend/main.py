@@ -11,13 +11,13 @@ from mangum import Mangum
 
 
 # Un comment on 1st Time Starting App in Local [Remove in Cloud]
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     Base.metadata.create_all(bind=engine)
-#     yield
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
-app = FastAPI(title="Acxhange Library System")
-# app = FastAPI(title="Acxhange Library System", lifespan=lifespan)
+# app = FastAPI(title="Acxhange Library System")
+app = FastAPI(title="Acxhange Library System", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
