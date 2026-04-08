@@ -8,7 +8,7 @@
     </header>
 
     <div class="hr-requests__filter">
-        <label  class="hr-requests__filter-label">Filter by Request Type:</label>
+        <label class="hr-requests__filter-label">Filter by Request Type:</label>
 
         <select class="hr-requests__filter-select" [(ngModel)]="selectedType" (change)="applyFilter()">
             <option value="ALL">All</option>
@@ -66,10 +66,18 @@
             </dl>
 
             <div class="request-card__actions" *ngIf="req.status === 'PENDING'">
-                <button class="request-card__button request-card__button--approve"
-                    (click)="review(req.request_id, true)">Approve</button>
-                <button class="request-card__button request-card__button--reject"
-                    (click)="review(req.request_id, false)">Reject</button>
+                <button class="request-card__button request-card__button--approve" (click)="review(req, true)">
+                    Approve
+                </button>
+
+                <button class="request-card__button request-card__button--reject" (click)="review(req, false)">
+                    Reject
+                </button>
+            </div>
+
+            <div *ngIf="req.status === 'PENDING'" style="margin-top: 10px;">
+                <input type="text" placeholder="Add Remark ..." [(ngModel)]="req.remarkInput"
+                    class="request-card__input" />
             </div>
         </article>
     </div>

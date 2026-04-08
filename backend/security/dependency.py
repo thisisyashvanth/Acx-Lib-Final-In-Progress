@@ -9,6 +9,7 @@ from models.user_model import RoleEnum, User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 

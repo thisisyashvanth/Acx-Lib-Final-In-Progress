@@ -20,20 +20,14 @@ class Requests(Base):
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True, index=True)
-
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
-
     borrow_id = Column(Integer, ForeignKey("borrow_records.id"), nullable=True)
-
     request_type = Column(Enum(RequestType), nullable=False)
     status = Column(Enum(RequestStatus), default=RequestStatus.PENDING)
-
     requested_at = Column(DateTime(timezone=True), server_default=func.now())
-    
     reviewed_at = Column(DateTime(timezone=True), nullable=True)
     reviewed_by = Column(Integer, ForeignKey("users.id"), nullable=True)
-
     remarks = Column(String(255), nullable=True)
 
     user = relationship("User", foreign_keys=[user_id])

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RequestService } from '../../../services/request.service';
+import { ExcelService } from '../../../services/excel.service';
 
 @Component({
   selector: 'app-hr-view-request-history',
@@ -17,7 +18,7 @@ export class HrViewRequestHistoryComponent {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private requestService: RequestService) { }
+  constructor(private requestService: RequestService, private excelService: ExcelService) { }
 
   ngOnInit(): void {
     this.loadRequests();
@@ -61,5 +62,24 @@ export class HrViewRequestHistoryComponent {
       req.status.toLowerCase().includes(text) ||
       req.request_type.toLowerCase().includes(text)
     );
+  }
+
+  downloadExcel() {
+    this.excelService.exportRequests(this.filteredRequests).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        a.href = url;
+        a.download = `request_history_${new Date().toISOString()}.xlsx`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to download Excel';
+        console.error(err);
+      }
+    });
   }
 }

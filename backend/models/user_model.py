@@ -7,11 +7,11 @@ class RoleEnum(str, enum.Enum):
     HR = "HR"
     EMPLOYEE = "EMPLOYEE"
 
+
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-
     employee_id = Column(String(50), nullable=False, unique=True)
     name = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, nullable=False)

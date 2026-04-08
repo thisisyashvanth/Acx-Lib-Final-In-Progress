@@ -33,6 +33,12 @@
         No request history found.
     </div>
 
+    <div style="margin-bottom: 10px;">
+        <button (click)="downloadExcel()" class="employee-catalog__action-button">
+            Download Excel
+        </button>
+    </div>
+
     <!-- Request Table -->
     <div class="employee-catalog__table-wrap" *ngIf="!loading && filteredRequests.length > 0">
         <table class="employee-catalog__table">

@@ -1,27 +1,19 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-
 from models.borrow_model import BorrowRecord, TransactionStatus
 from models.book_model import Book
 from models.request_model import RequestStatus, RequestType, Requests
 from models.user_model import User
 
 
-# ================================
-# 🔹 CONFIG
-# ================================
 MAX_RENEWALS = 1
 RESTRICTION_DAYS = 30
 
 
-# ================================
-# 🔹 POLICY UTILS
-# ================================
 def _get_fourth_tuesday(from_date: datetime) -> datetime:
     """Returns the 4th Tuesday on or after from_date."""
-    # Normalize to date portion
     d = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
-    days_until_tuesday = (1 - d.weekday()) % 7  # 1 = Tuesday
+    days_until_tuesday = (1 - d.weekday()) % 7
     first_tuesday = d + timedelta(days=days_until_tuesday)
     fourth_tuesday = first_tuesday + timedelta(weeks=3)
     return fourth_tuesday
@@ -39,9 +31,6 @@ def _is_tuesday_second_half() -> bool:
     return True 
 
 
-# ================================
-# ✅ CREATE REQUESTS
-# ================================
 def create_borrow_request(book_id: int, db: Session, user):
 
     if not _is_tuesday_second_half():
@@ -87,7 +76,6 @@ def create_borrow_request(book_id: int, db: Session, user):
 
 def create_renew_request(borrow_id: int, db: Session, user):
 
-    # 🔹 Policy: renewals only on Tuesdays after 12 PM
     if not _is_tuesday_second_half():
         raise Exception("Renewals can only be requested on Tuesdays after 12:00 PM")
 
@@ -130,7 +118,6 @@ def create_renew_request(borrow_id: int, db: Session, user):
 
 def create_return_request(borrow_id: int, db: Session, user):
 
-    # 🔹 Policy: returns only on Tuesdays after 12 PM
     if not _is_tuesday_second_half():
         raise Exception("Returns can only be requested on Tuesdays after 12:00 PM")
 
@@ -168,9 +155,6 @@ def create_return_request(borrow_id: int, db: Session, user):
     return {"message": "Return request created", "request_id": req.id}
 
 
-# ================================
-# ✅ OVERDUE + RESTRICTION (HR triggers)
-# ================================
 def check_and_flag_overdue(db: Session):
     """
     Marks overdue borrows and restricts employees who failed to
@@ -224,10 +208,7 @@ def lift_expired_restrictions(db: Session):
     return {"lifted_count": len(expired)}
 
 
-# ================================
-# ✅ REVIEW REQUEST (HR)
-# ================================
-def review_request(request_id: int, approve: bool, db: Session, hr_user):
+def review_request(request_id: int, approve: bool, remarks: str | None, db: Session, hr_user):
 
     if not _is_tuesday_second_half():
         raise Exception("Requests can only be reviewed on Tuesdays between 12:00 PM and 6:00 PM")
@@ -243,7 +224,11 @@ def review_request(request_id: int, approve: bool, db: Session, hr_user):
     now = datetime.now(timezone.utc)
 
     if not approve:
+        if not remarks:
+            raise Exception("Remarks are required for rejection")
+
         req.status = RequestStatus.REJECTED
+        req.remarks = remarks
         req.reviewed_by = hr_user.id
         req.reviewed_at = now
         db.commit()
@@ -262,14 +247,14 @@ def review_request(request_id: int, approve: bool, db: Session, hr_user):
     req.reviewed_by = hr_user.id
     req.reviewed_at = now
 
+    if remarks:
+        req.remarks = remarks
+
     db.commit()
 
     return {"message": "Request approved"}
 
 
-# ================================
-# 🔹 APPROVAL HELPERS
-# ================================
 def _approve_borrow(req, db: Session, hr_user, now: datetime):
 
     book = db.query(Book).filter_by(id=req.book_id).with_for_update().first()
@@ -285,7 +270,6 @@ def _approve_borrow(req, db: Session, hr_user, now: datetime):
         db.commit()
         raise Exception("No copies available. Request auto-rejected.")
 
-    # 🔹 Policy: due date = 4th Tuesday from issue date
     due_date = _get_fourth_tuesday(now)
 
     borrow = BorrowRecord(
@@ -298,7 +282,6 @@ def _approve_borrow(req, db: Session, hr_user, now: datetime):
     db.add(borrow)
     book.available_copies -= 1
 
-    # Auto-reject all other pending borrow requests for the same user
     db.query(Requests).filter(
         Requests.user_id == req.user_id,
         Requests.id != req.id,
@@ -325,7 +308,6 @@ def _approve_renew(req, db: Session):
     if borrow.renewal_count >= MAX_RENEWALS:
         raise Exception("Renewal limit reached")
 
-    # 🔹 Policy: new due date = 4th Tuesday from current due date
     borrow.due_date = _get_fourth_tuesday(borrow.due_date)
     borrow.renewal_count += 1
 
@@ -345,9 +327,6 @@ def _approve_return(req, db: Session):
         book.available_copies += 1
 
 
-# ================================
-# ✅ GETTERS
-# ================================
 def get_all_requests(db: Session, status=None, request_type=None):
     query = db.query(Requests)
 
@@ -361,7 +340,4 @@ def get_all_requests(db: Session, status=None, request_type=None):
 
 
 def get_my_requests(db: Session, user):
-    return db.query(Requests).filter(
-        Requests.user_id == user.id,
-        Requests.status != RequestStatus.PENDING
-    ).order_by(Requests.requested_at.desc()).all()
+    return db.query(Requests).filter(Requests.user_id == user.id, Requests.status != RequestStatus.PENDING).order_by(Requests.requested_at.desc()).all()

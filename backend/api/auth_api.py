@@ -7,6 +7,7 @@ from services import auth_service
 
 router = APIRouter(prefix="/auth", tags=["Auth Routes"])
 
+
 @router.post("/signup", response_model=UserSignupResp)
 def employee_signup(employee: UserSignupReq, db: Session = Depends(get_db)):
     return auth_service.employee_signup(employee, db)

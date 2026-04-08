@@ -26,18 +26,12 @@ export class RequestService {
     return this.http.post(`${this.baseUrl}/return/${borrowId}`, {});
   }
 
-  getAllRequests(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/requests`);
+  reviewRequest(requestId: number, data: any): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/${requestId}/review`,
+      data
+    );
   }
-
-  reviewRequest(requestId: number, approve: boolean): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${requestId}/review?approve=${approve}`, {});
-  }
-
-  getMyBooks(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/users/my-books`);
-  }
-
 
   getRequests(status?: string, type?: string): Observable<Request[]> {
     let params = new HttpParams();

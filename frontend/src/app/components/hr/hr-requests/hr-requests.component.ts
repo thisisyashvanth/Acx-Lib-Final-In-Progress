@@ -36,7 +36,7 @@ export class HrRequestsComponent {
   loadRequests() {
     this.loading = true;
 
-    this.requestService.getAllRequests().subscribe({
+    this.requestService.getRequests().subscribe({
       next: (res) => {
         // ✅ keep your preferred sorting (by ID)
         this.requests = [...res].sort(
@@ -64,16 +64,25 @@ export class HrRequestsComponent {
     });
   }
 
-  review(requestId: number, approve: boolean) {
-    this.requestService.reviewRequest(requestId, approve)
+  review(req: any, approve: boolean) {
+
+    if (!approve && !req.remarkInput) {
+      this.showMessage('Remarks required for rejection', 'error');
+      return;
+    }
+
+    const payload = {
+      approve: approve,
+      remarks: req.remarkInput || null
+    };
+
+    this.requestService.reviewRequest(req.request_id, payload)
       .subscribe({
         next: () => {
           this.showMessage(
             `Request ${approve ? 'approved' : 'rejected'}`,
             'success'
           );
-
-          // ✅ IMPORTANT FIX: reload from backend
           this.loadRequests();
         },
         error: (err) => {

@@ -36,6 +36,12 @@
         No users matched your search.
     </div>
 
+    <div style="margin-bottom: 10px;">
+        <button (click)="downloadExcel()" class="employee-catalog__action-button">
+            Download Excel
+        </button>
+    </div>
+
     <!-- Users Table -->
     <div class="employee-catalog__table-wrap" *ngIf="!loading && filteredUsers.length > 0">
         <table class="employee-catalog__table">

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
+import { ExcelService } from '../../../services/excel.service';
 
 @Component({
   selector: 'app-hr-get-all-users',
@@ -17,7 +18,7 @@ export class HrGetAllUsersComponent {
   successMessage: string = '';
   errorMessage: string = '';
 
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(private router: Router, private userService: UserService, private excelService: ExcelService) { }
 
   ngOnInit(): void {
     this.getAllUsers();
@@ -54,5 +55,24 @@ export class HrGetAllUsersComponent {
 
   viewHistory(userId: number) {
     this.router.navigate(['/hr-user-view-history', userId]);
+  }
+
+  downloadExcel() {
+    this.excelService.exportUsers(this.filteredUsers).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        a.href = url;
+        a.download = `users_${new Date().toISOString()}.xlsx`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to download Excel';
+        console.error(err);
+      }
+    });
   }
 }

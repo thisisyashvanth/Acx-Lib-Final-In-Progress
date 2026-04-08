@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-
 from models.request_model import RequestStatus, RequestType
 
 
@@ -38,3 +37,8 @@ class GetRequestResp(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ReviewRequestBody(BaseModel):
+    approve: bool
+    remarks: str | None = None

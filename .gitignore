@@ -24,6 +24,7 @@ frontend/.vscode
 # Python cache
 backend/__pycache__/
 backend/*.py[cod]
+__pycache__
 
 # Virtual environment
 backend/venv/
